@@ -1,1155 +1,129 @@
 {
-  "mainprog": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "version"
-      },
-      {
-        "type": "zero_or_more",
-        "elements": [
-          {
-            "type": "element",
-            "name": "statement"
-          }
-        ]
-      }
-    ]
-  },
-  "statement": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "decl"
-      },
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "gatedecl"
-              },
-              {
-                "type": "element",
-                "name": "goplist"
-              },
-              {
-                "type": "literal",
-                "value": "}"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "gatedecl"
-              },
-              {
-                "type": "literal",
-                "value": "}"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "opaque"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "opaque"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "opaque"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "element",
-            "name": "qop"
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "if"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "=="
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "qop"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "barrier"
-              },
-              {
-                "type": "element",
-                "name": "anylist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "version": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "literal",
-        "value": "OPENQASM"
-      },
-      {
-        "type": "element",
-        "name": "REAL"
-      },
-      {
-        "type": "literal",
-        "value": ";"
-      }
-    ]
-  },
-  "decl": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "qreg"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "["
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": "]"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "creg"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "["
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": "]"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "gatedecl": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "gate"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": "{"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "gate"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": "{"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "gate"
-              },
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "idlist"
-              },
-              {
-                "type": "literal",
-                "value": "{"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "goplist": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "one_or_more",
-        "element": {
-          "type": "alternative",
-          "options": [
-            {
-              "type": "element",
-              "name": "uop"
-            },
-            {
-              "type": "sequence",
-              "elements": [
-                {
-                  "type": "literal",
-                  "value": "barrier"
-                },
-                {
-                  "type": "element",
-                  "name": "idlist"
-                },
-                {
-                  "type": "literal",
-                  "value": ";"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "qop": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "uop"
-      },
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "measure"
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": "->"
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "reset"
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "uop": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "U"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "explist"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "CX"
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": ","
-              },
-              {
-                "type": "element",
-                "name": "argument"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "element",
-                "name": "anylist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "anylist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "ID"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "explist"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              },
-              {
-                "type": "element",
-                "name": "anylist"
-              },
-              {
-                "type": "literal",
-                "value": ";"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "anylist": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "idlist"
-      },
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "element",
-            "name": "mixedlist"
-          }
-        ]
-      }
-    ]
-  },
-  "idlist": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "one_or_more",
-        "element": {
-          "type": "sequence",
-          "elements": [
-            {
-              "type": "element",
-              "name": "ID"
-            },
-            {
-              "type": "literal",
-              "value": ","
-            }
-          ]
-        }
-      },
-      {
-        "type": "element",
-        "name": "ID"
-      }
-    ]
-  },
-  "mixedlist": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "one_or_more",
-            "element": {
-              "type": "sequence",
-              "elements": [
-                {
-                  "type": "element",
-                  "name": "ID"
-                },
-                {
-                  "type": "literal",
-                  "value": "["
-                },
-                {
-                  "type": "element",
-                  "name": "INT"
-                },
-                {
-                  "type": "literal",
-                  "value": "]"
-                },
-                {
-                  "type": "literal",
-                  "value": ","
-                }
-              ]
-            }
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "one_or_more",
-                "element": {
-                  "type": "element",
-                  "name": "ID"
-                }
-              },
-              {
-                "type": "literal",
-                "value": "["
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": "]"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "zero_or_more",
-                "element": {
-                  "type": "sequence",
-                  "elements": [
-                    {
-                      "type": "element",
-                      "name": "ID"
-                    },
-                    {
-                      "type": "literal",
-                      "value": ","
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "one_or_more",
-                "element": {
-                  "type": "element",
-                  "name": "ID"
-                }
-              },
-              {
-                "type": "literal",
-                "value": "["
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": "]"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "argument": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "ID"
-      },
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "["
-              },
-              {
-                "type": "element",
-                "name": "INT"
-              },
-              {
-                "type": "literal",
-                "value": "]"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "explist": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "exp"
-      },
-      {
-        "type": "zero_or_more",
-        "elements": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": ","
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "exp": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "REAL"
-      },
-      {
-        "type": "element",
-        "name": "INT"
-      },
-      {
-        "type": "literal",
-        "value": "pi"
-      },
-      {
-        "type": "element",
-        "name": "ID"
-      },
-      {
-        "type": "alternative",
-        "options": [
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": "+"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": "-"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": "*"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": "/"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "-"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": "^"
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              }
-            ]
-          },
-          {
-            "type": "sequence",
-            "elements": [
-              {
-                "type": "element",
-                "name": "unaryop"
-              },
-              {
-                "type": "literal",
-                "value": "("
-              },
-              {
-                "type": "element",
-                "name": "exp"
-              },
-              {
-                "type": "literal",
-                "value": ")"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "unaryop": {
-    "type": "rule",
-    "definition": [
-      {
-        "type": "literal",
-        "value": "sin"
-      },
-      {
-        "type": "literal",
-        "value": "cos"
-      },
-      {
-        "type": "literal",
-        "value": "tan"
-      },
-      {
-        "type": "literal",
-        "value": "exp"
-      },
-      {
-        "type": "literal",
-        "value": "ln"
-      },
-      {
-        "type": "literal",
-        "value": "sqrt"
-      }
-    ]
-  },
-  "ID": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "range",
-        "from": "a",
-        "to": "z"
-      },
-      {
-        "type": "range",
-        "from": "A",
-        "to": "Z"
-      },
-      {
-        "type": "range",
-        "from": "0",
-        "to": "9"
-      },
-      {
-        "type": "literal",
-        "value": "_"
-      }
-    ],
-    "quantifier": "+"
-  },
-  "REAL": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "element",
-        "name": "INT"
-      },
-      {
-        "type": "literal",
-        "value": "."
-      },
-      {
-        "type": "range",
-        "from": "0",
-        "to": "9",
-        "quantifier": "+"
-      },
-      {
-        "type": "optional",
-        "element": {
-          "type": "sequence",
-          "elements": [
-            {
-              "type": "set",
-              "elements": [
-                "e",
-                "E"
-              ]
-            },
-            {
-              "type": "optional",
-              "elements": [
-                {
-                  "type": "set",
-                  "elements": [
-                    "+",
-                    "-"
-                  ]
-                },
-                {
-                  "type": "range",
-                  "from": "0",
-                  "to": "9",
-                  "quantifier": "+"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "INT": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "optional",
-        "element": {
-          "type": "set",
-          "elements": [
-            "+",
-            "-"
-          ]
-        }
-      },
-      {
-        "type": "range",
-        "from": "0",
-        "to": "9",
-        "quantifier": "+"
-      }
-    ]
-  },
-  "WS": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "set",
-        "elements": [
-          " ",
-          "\t",
-          "\f",
-          "\r",
-          "\n"
-        ],
-        "quantifier": "+"
-      }
-    ],
-    "action": "skip"
-  },
-  "COMMENT": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "literal",
-        "value": "/*"
-      },
-      {
-        "type": "any_character",
-        "quantifier": "?"
-      },
-      {
-        "type": "literal",
-        "value": "*/"
-      }
-    ],
-    "action": "skip"
-  },
-  "LINE_COMMENT": {
-    "type": "lexer_rule",
-    "definition": [
-      {
-        "type": "literal",
-        "value": "//"
-      },
-      {
-        "type": "negated_set",
-        "elements": [
-          {
-            "type": "literal",
-            "value": "\r"
-          },
-          {
-            "type": "literal",
-            "value": "\n"
-          }
-        ],
-        "quantifier": "*"
-      }
-    ],
-    "action": "skip"
-  }
+  "<mainprog>": [["<version>", "<statements>"]],
+  "<statements>": [["<statement>", "<statements>"], []],
+  "<statement>": [
+    ["<decl>"],
+    ["<gatedecl>", "<goplist>", "}"],
+    ["<gatedecl>", "}"],
+    ["opaque", "<ID>", "<idlist>", ";"],
+    ["opaque", "<ID>", "(", ")", "<idlist>", ";"],
+    ["opaque", "<ID>", "(", "<idlist>", ")", "<idlist>", ";"],
+    ["<qop>"],
+    ["if", "(", "<ID>", "==", "<INT>", ")", "<qop>"],
+    ["barrier", "<anylist>", ";"]
+  ],
+  "<version>": [["OPENQASM", "<REAL>", ";"]],
+  "<decl>": [
+    ["qreg", "<ID>", "[", "<INT>", "]", ";"],
+    ["creg", "<ID>", "[", "<INT>", "]", ";"]
+  ],
+  "<gatedecl>": [
+    ["gate", "<ID>", "<idlist>", "{"],
+    ["gate", "<ID>", "(", ")", "<idlist>", "{"],
+    ["gate", "<ID>", "(", "<idlist>", ")", "<idlist>", "{"]
+  ],
+  "<goplist>": [["<uop_or_barrier>"]],
+  "<uop_or_barrier>": [
+    ["<uop>", "<uop_or_barrier>"],
+    ["<uop>"],
+    ["barrier", "<idlist>", ";", "<uop_or_barrier>"],
+    ["barrier", "<idlist>", ";"]
+  ],
+  "<qop>": [
+    ["<uop>"],
+    ["measure", "<argument>", "->", "<argument>", ";"],
+    ["reset", "<argument>", ";"]
+  ],
+  "<uop>": [
+    ["U", "(", "<explist>", ")", "<argument>", ";"],
+    ["CX", "<argument>", ",", "<argument>", ";"],
+    ["<ID>", "<anylist>", ";"],
+    ["<ID>", "(", ")", "<anylist>", ";"],
+    ["<ID>", "(", "<explist>", ")", "<anylist>", ";"]
+  ],
+  "<anylist>": [["<idlist>"], ["<mixedlist>"]],
+  "<idlist>": [["<ID>", "<idlist_rest>"]],
+  "<idlist_rest>": [[",", "<ID>", "<idlist_rest>"], []],
+  "<mixedlist>": [
+    ["<mixedlist_option1>"],
+    ["<mixedlist_option2>"],
+    ["<mixedlist_option3>"]
+  ],
+  "<mixedlist_option1>": [
+    ["<id_with_int_list>", "<ID>"]
+  ],
+  "<mixedlist_option2>": [
+    ["<id_with_int_list>", "<ID>", "[", "<INT>", "]"]
+  ],
+  "<mixedlist_option3>": [
+    ["<id_list_with_comma>", "<ID>", "[", "<INT>", "]"]
+  ],
+  "<id_with_int_list>": [
+    ["<ID>", "[", "<INT>", "]", ",", "<id_with_int_list>"],
+    []
+  ],
+  "<id_list_with_comma>": [
+    ["<ID>", ",", "<id_list_with_comma_inner>"],
+    []
+  ],
+  "<id_list_with_comma_inner>": [
+    ["<ID>", ",", "<id_list_with_comma_inner>"],
+    ["<ID>", "[", "<INT>", "]", ",", "<id_with_int_list>"]
+  ],
+  "<argument>": [["<ID>"], ["<ID>", "[", "<INT>", "]"]],
+  "<explist>": [["<exp>", "<explist_rest>"]],
+  "<explist_rest>": [[",", "<exp>", "<explist_rest>"], []],
+  "<exp>": [
+    ["<REAL>"],
+    ["<INT>"],
+    ["pi"],
+    ["<ID>"],
+    ["<exp>", "+", "<exp>"],
+    ["<exp>", "-", "<exp>"],
+    ["<exp>", "*", "<exp>"],
+    ["<exp>", "/", "<exp>"],
+    ["-", "<exp>"],
+    ["<exp>", "^", "<exp>"],
+    ["(", "<exp>", ")"],
+    ["<unaryop>", "(", "<exp>", ")"]
+  ],
+  "<unaryop>": [
+    ["sin"],
+    ["cos"],
+    ["tan"],
+    ["exp"],
+    ["ln"],
+    ["sqrt"]
+  ],
+  "<ID>": [["<letter>", "<ID_rest>"]],
+  "<ID_rest>": [["<letter_or_digit>", "<ID_rest>"], []],
+  "<letter>": [
+    ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"], ["h"], ["i"], ["j"],
+    ["k"], ["l"], ["m"], ["n"], ["o"], ["p"], ["q"], ["r"], ["s"], ["t"],
+    ["u"], ["v"], ["w"], ["x"], ["y"], ["z"],
+    ["A"], ["B"], ["C"], ["D"], ["E"], ["F"], ["G"], ["H"], ["I"], ["J"],
+    ["K"], ["L"], ["M"], ["N"], ["O"], ["P"], ["Q"], ["R"], ["S"], ["T"],
+    ["U"], ["V"], ["W"], ["X"], ["Y"], ["Z"]
+  ],
+  "<letter_or_digit>": [
+    ["<letter>"],
+    ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
+  ],
+  "<INT>": [
+    ["<digit>", "<INT_rest>"]
+  ],
+  "<INT_rest>": [
+    ["<digit>", "<INT_rest>"],
+    []
+  ],
+  "<digit>": [
+    ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
+  ],
+  "<REAL>": [
+    ["<INT>", ".", "<INT>"],
+    ["<INT>", ".", "<INT>", "e", "<INT>"],
+    ["<INT>", ".", "<INT>", "E", "<INT>"],
+    ["<INT>", "e", "<INT>"],
+    ["<INT>", "E", "<INT>"]
+  ]
 }
