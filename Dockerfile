@@ -12,9 +12,9 @@ RUN ./build_grammar_mutator.sh; \
       cd grammar-mutator/ && \
       make GRAMMAR_FILE=/QASM.json
 
+COPY fuzzer_input_corpus/ /fuzzer_input_corpus
+COPY run_fuzzer.sh /run_fuzzer.sh
+
+RUN pip install qiskit qiskit-aer matplotlib pylatexenc
+
 WORKDIR /
-RUN mkdir -p /INPUT_CORPUS
-RUN git clone https://github.com/Veri-Q/Benchmark.git && \
-    cd Benchmark && \ 
-    export QASMS=$(find . -name *.qasm) && \
-    for F in $QASMS; do cp $F /INPUT_CORPUS; done
