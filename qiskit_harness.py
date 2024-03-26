@@ -31,15 +31,16 @@ def run_qasm(qasm_content):
 def visualise_output(quantum_circuit, result):
     # Returns counts
     counts = result.get_counts(quantum_circuit)
-    print("\nTotal count for 00 and 11 are:", counts)
+    print("\nTotal count:", counts)
 
     # Draw the circuit
-    print("Drawing the circuit:")
+    print("Drawing the circuit:...")
     circuit_fig = quantum_circuit.draw(output='mpl')
     circuit_fig.savefig('circuit.png')
 
     # Save the histogram of the outcomes
     histogram_fig = plot_histogram(counts)
+    print("Drawing the histogram:...")
     histogram_fig.savefig('measurement_outcomes_histogram.png')  # Save the histogram
 
 
@@ -58,7 +59,7 @@ if fuzz:
     os._exit(0)
 else:
     # Load QASM file
-    qasm_file = "fuzzer_input_corpus/adder_n4.qasm"  # Update this path to your QASM file
+    qasm_file = "fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
     with open(qasm_file, "r") as file:
         qasm_content = file.read()
         (quantum_circuit, result) = run_qasm(qasm_content)
