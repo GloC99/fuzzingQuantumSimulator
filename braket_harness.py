@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from braket.circuits import Circuit
 from braket.devices import LocalSimulator
 from qiskit import QuantumCircuit
@@ -8,6 +9,7 @@ from braket.default_simulator.openqasm.parser.openqasm_parser import parse
 from braket.default_simulator.simulator import BaseLocalSimulator
 from braket.ir.openqasm import Program
 from qiskit_aer import Aer
+from braket.circuits import Circuit
 # import matplotlib.pyplot as plt
 # import afl
 import os, sys, argparse
@@ -17,8 +19,27 @@ def run_qasm(qasm_content):
     device = LocalSimulator()
     program = Program(source=qasm_content)
     my_task = device.run(program, shots=100)
-    print(my_task.result())
+    # print(my_task.result())
 
+    qc = QuantumCircuit.from_qasm_str(qasm_content)
+    print(qc)
+
+    return (qc, my_task.result())
+
+def visualise_output(quantum_circuit, result):
+    # Returns counts
+    counts = result.measurement_counts
+    print("\nTotal count:", counts)
+
+    # Draw the circuit
+    print("Drawing the circuit:...")
+    circuit_fig = quantum_circuit.draw(output='mpl')
+    circuit_fig.savefig('circuit.png')
+
+    # Save the histogram of the outcomes
+    histogram_fig = plot_histogram(counts)
+    print("Drawing the histogram:...")
+    histogram_fig.savefig('measurement_outcomes_histogram_braket.png')  # Save the histogram
 
 
 def find_file(filename, root_dir):
@@ -63,7 +84,8 @@ def main(fuzz=False):
     # qasm_file = "QASM_dataset/ae_nativegates_ibm_qiskit_opt0_10.qasm"
     with open(qasm_file, "r") as file:
         qasm_content = file.read()
-        run_qasm(qasm_content)
+        (quantum_circuit, result) = run_qasm(qasm_content)
+        visualise_output(quantum_circuit, result)
 
 
 if __name__ == "__main__":
