@@ -11,6 +11,7 @@ import os, sys, argparse
 def run_qasm(qasm_content):
     # Create a quantum circuit from QASM
     quantum_circuit = QuantumCircuit.from_qasm_str(qasm_content)
+    quantum_circuit.measure_all()
 
     # Get the Aer simulator backend
     simulator = Aer.get_backend('qasm_simulator')
@@ -29,8 +30,8 @@ def run_qasm(qasm_content):
 
 def visualise_output(quantum_circuit, result):
     # Returns counts
-    # counts = result.get_counts(quantum_circuit)
-    # print("\nTotal count for 00 and 11 are:", counts)
+    counts = result.get_counts(quantum_circuit)
+    print("\nTotal count for 00 and 11 are:", counts)
 
     # Draw the circuit
     print("Drawing the circuit:")
@@ -38,8 +39,8 @@ def visualise_output(quantum_circuit, result):
     circuit_fig.savefig('circuit.png')
 
     # Save the histogram of the outcomes
-    # histogram_fig = plot_histogram(counts)
-    # histogram_fig.savefig('measurement_outcomes_histogram.png')  # Save the histogram
+    histogram_fig = plot_histogram(counts)
+    histogram_fig.savefig('measurement_outcomes_histogram.png')  # Save the histogram
 
 
 parser = argparse.ArgumentParser(description="Example script to check for --no-fuzz flag.")
@@ -57,7 +58,7 @@ if fuzz:
     os._exit(0)
 else:
     # Load QASM file
-    qasm_file = "/INPUT_CORPUS/adder_n10.qasm"  # Update this path to your QASM file
+    qasm_file = "fuzzer_input_corpus/adder_n4.qasm"  # Update this path to your QASM file
     with open(qasm_file, "r") as file:
         qasm_content = file.read()
         (quantum_circuit, result) = run_qasm(qasm_content)
