@@ -24,6 +24,8 @@ RUN cd qiskit && git checkout 1.0.2 && \
 RUN git clone https://github.com/Qiskit/qiskit-aer.git
 RUN cd qiskit-aer && git checkout 0.13.3 && \
     pip install .
+RUN git clone https://github.com/Qiskit/qiskit-qasm3-import.git
+RUN cd qiskit-qasm3-import && pip install .
 
 # INSTALL BRAKET FROM SOURCE
 WORKDIR /simulators/braket
@@ -36,7 +38,9 @@ COPY QASM_dataset/ /QASM_dataset
 COPY run_fuzzer.sh /run_fuzzer.sh
 COPY harnesses/ /harnesses
 
+RUN cp /simulators/qiskit/qiskit/qiskit/qasm/libs/stdgates.inc /harnesses/
+
 # Check that we can run all the simulators at least
+WORKDIR /harnesses
 RUN cd /harnesses && ./test.sh
 
-WORKDIR /
