@@ -59,7 +59,7 @@ if fuzz:
     os._exit(0)
 else:
     # Load QASM file
-    qasm_file = "fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
+    qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
     with open(qasm_file, "r") as file:
         qasm_content = file.read()
         (quantum_circuit, result) = run_qasm(qasm_content)
