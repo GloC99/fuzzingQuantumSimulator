@@ -51,12 +51,6 @@ class QiskitSimulator:
         num_qubits = quantum_circuit.num_qubits
         classical_bits = quantum_circuit.num_clbits
 
-        # print(f'qubits: {num_qubits}, classical_bits: {classical_bits}')
-        if classical_bits < num_qubits:
-            # Extend classical register to match the number of qubits if necessary
-            # print("Adding a classical register", num_qubits - classical_bits)
-            quantum_circuit.add_register(qiskit.ClassicalRegister(num_qubits - classical_bits))
-
         quantum_circuit.measure_all()
 
         # Convert the modified QuantumCircuit back into QASM
@@ -96,5 +90,8 @@ else:
         qasm_content = file.read()
         qasm_content = qiskit_sim.add_measurements_to(qasm_content)
         qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-        print(f'qiskit: {qiskit_sim.run_qasm(qasm_content, 1000)},\nbraket: {braket_sim.run_qasm(qasm_content, 1000)}')
+        qiskit_result = qiskit_sim.run_qasm(qasm_content, 1000)[1]
+        braket_result = braket_sim.run_qasm(qasm_content, 1000)[1]
+        print(f'qiskit: {qiskit_result.get_counts()},\nbraket: {braket_result.measurement_counts}')
+        print(qasm_content)
 
