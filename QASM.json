@@ -1,49 +1,48 @@
 {
-  "<mainprog>": [["<version>", "<statements>"]],
-  "<statements>": [["<statement>", "<statements>"], []],
+  "<mainprog>": [["OPENQASM 2.0;\ninclude \"qelib1.inc\";\n", "<statements>"]],
+  "<statements>": [["<statement>", "\n", "<statements>"], []],
   "<statement>": [
     ["<decl>"],
-    ["<gatedecl>", "<goplist>", "}"],
-    ["<gatedecl>", "}"],
-    ["opaque", "<ID>", "<idlist>", ";"],
-    ["opaque", "<ID>", "(", ")", "<idlist>", ";"],
-    ["opaque", "<ID>", "(", "<idlist>", ")", "<idlist>", ";"],
+    ["<gatedecl>", " ", "<goplist>", " ", "}"],
+    ["<gatedecl>", " ", "}"],
+    ["opaque", " ", "<idlist>", ";"],
+    ["opaque", " ", "<ID>", "(", ")", " ", "<idlist>", ";"],
+    ["opaque", " ", "<ID>", "(", "<idlist>", ")", " ", "<idlist>", ";"],
     ["<qop>"],
-    ["if", "(", "<ID>", "==", "<INT>", ")", "<qop>"],
-    ["barrier", "<anylist>", ";"]
+    ["if", " ", "(", "<ID>", "==", "<INT>", ")", " ", "<qop>"],
+    ["barrier", " ", "<anylist>", ";"]
   ],
-  "<version>": [["OPENQASM", "<REAL>", ";"]],
   "<decl>": [
-    ["qreg", "<ID>", "[", "<INT>", "]", ";"],
-    ["creg", "<ID>", "[", "<INT>", "]", ";"]
+    ["qreg", " ", "<ID>", "[", "<INT>", "]", ";"],
+    ["creg", " ", "<ID>", "[", "<INT>", "]", ";"]
   ],
   "<gatedecl>": [
-    ["gate", "<ID>", "<idlist>", "{"],
-    ["gate", "<ID>", "(", ")", "<idlist>", "{"],
-    ["gate", "<ID>", "(", "<idlist>", ")", "<idlist>", "{"]
+    ["gate", " ", "<ID>", " ", "<idlist>", " ", "{"],
+    ["gate", " ", "<ID>", "(", ")", " ", "<idlist>", " ", "{"],
+    ["gate", " ", "<ID>", "(", "<idlist>", ")", " ", "<idlist>", " ", "{"]
   ],
   "<goplist>": [["<uop_or_barrier>"]],
   "<uop_or_barrier>": [
-    ["<uop>", "<uop_or_barrier>"],
     ["<uop>"],
-    ["barrier", "<idlist>", ";", "<uop_or_barrier>"],
-    ["barrier", "<idlist>", ";"]
+    ["<uop>", " ", "<uop_or_barrier>"],
+    ["barrier", " ", "<idlist>", ";", " ", "<uop_or_barrier>"],
+    ["barrier", " ", "<idlist>", ";"]
   ],
   "<qop>": [
     ["<uop>"],
-    ["measure", "<argument>", "->", "<argument>", ";"],
-    ["reset", "<argument>", ";"]
+    ["measure", " ", "<argument>", "->", "<argument>", ";"],
+    ["reset", " ", "<argument>", ";"]
   ],
   "<uop>": [
     ["U", "(", "<explist>", ")", "<argument>", ";"],
-    ["CX", "<argument>", ",", "<argument>", ";"],
-    ["<ID>", "<anylist>", ";"],
-    ["<ID>", "(", ")", "<anylist>", ";"],
-    ["<ID>", "(", "<explist>", ")", "<anylist>", ";"]
+    ["CX", " ", "<argument>", ",", "<argument>", ";"],
+    ["<ID>", " ", "<anylist>", ";"],
+    ["<ID>", "(", ")", " ", "<anylist>", ";"],
+    ["<ID>", "(", "<explist>", ")", " ", "<anylist>", ";"]
   ],
   "<anylist>": [["<idlist>"], ["<mixedlist>"]],
   "<idlist>": [["<ID>", "<idlist_rest>"]],
-  "<idlist_rest>": [[",", "<ID>", "<idlist_rest>"], []],
+  "<idlist_rest>": [[",", " ", "<ID>", "<idlist_rest>"], []],
   "<mixedlist>": [
     ["<mixedlist_option1>"],
     ["<mixedlist_option2>"],
@@ -95,30 +94,8 @@
     ["ln"],
     ["sqrt"]
   ],
-  "<ID>": [["<letter>", "<ID_rest>"]],
-  "<ID_rest>": [["<letter_or_digit>", "<ID_rest>"], []],
-  "<letter>": [
-    ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"], ["h"], ["i"], ["j"],
-    ["k"], ["l"], ["m"], ["n"], ["o"], ["p"], ["q"], ["r"], ["s"], ["t"],
-    ["u"], ["v"], ["w"], ["x"], ["y"], ["z"],
-    ["A"], ["B"], ["C"], ["D"], ["E"], ["F"], ["G"], ["H"], ["I"], ["J"],
-    ["K"], ["L"], ["M"], ["N"], ["O"], ["P"], ["Q"], ["R"], ["S"], ["T"],
-    ["U"], ["V"], ["W"], ["X"], ["Y"], ["Z"]
-  ],
-  "<letter_or_digit>": [
-    ["<letter>"],
-    ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
-  ],
-  "<INT>": [
-    ["<digit>", "<INT_rest>"]
-  ],
-  "<INT_rest>": [
-    ["<digit>", "<INT_rest>"],
-    []
-  ],
-  "<digit>": [
-    ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
-  ],
+  "<ID>": [["id1"], ["id2"], ["id3"], ["id4"], ["id5"], ["id6"]],
+  "<INT>": [["-1"], ["0"], ["1"], ["2"], ["3"], ["4"], ["99"]],
   "<REAL>": [
     ["<INT>", ".", "<INT>"],
     ["<INT>", ".", "<INT>", "e", "<INT>"],

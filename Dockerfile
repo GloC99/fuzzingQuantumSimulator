@@ -44,4 +44,6 @@ RUN cp /simulators/qiskit/qiskit/qiskit/qasm/libs/stdgates.inc /harnesses/
 WORKDIR /harnesses
 RUN cd /harnesses && ./test.sh
 
-RUN echo -e "set tabstop=4\nset expandtab\nset number" >> ~/.vimrc
+RUN echo "set tabstop=4" >> ~/.vimrc && \ 
+    echo "set expandtab" >> ~/.vimrc && \
+    echo "set number" >> ~/.vimrc

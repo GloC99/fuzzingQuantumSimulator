@@ -7,11 +7,12 @@ from braket.ir.openqasm import Program as BraketProgram
 from qiskit import QuantumCircuit, transpile
 from qiskit.qasm3 import dumps, loads
 from qiskit_aer import Aer
+from qiskit.qasm2.exceptions import QASM2ParseError
+from qiskit.transpiler.exceptions import CircuitTooWideForTarget
 
 from kl_divergence import get_kl_divergence
 
 import matplotlib.pyplot as plt
-import afl
 import os, sys, argparse
 
 class BraketSimulator:
@@ -32,7 +33,10 @@ class QiskitSimulator:
         quantum_circuit = loads(qasm_content)
     
         # Transpile the circuit for the simulator
-        transpiled_circuit = transpile(quantum_circuit, self.simulator)
+        try:
+            transpiled_circuit = transpile(quantum_circuit, self.simulator)
+        except CircuitTooWideForTarget:
+            return None
     
         # Run the transpiled circuit on the simulator
         job = self.simulator.run(transpiled_circuit, shots=shots)
@@ -45,7 +49,12 @@ class QiskitSimulator:
     # Generated programs don't necessarily output their results, so add measurements
     def add_measurements_to(self, qasm_content):
         # Create a quantum circuit from QASM
-        quantum_circuit = QuantumCircuit.from_qasm_str(qasm_content)
+        try:
+            quantum_circuit = QuantumCircuit.from_qasm_str(qasm_content)
+        except QASM2ParseError:
+            # Probably tried to use a variable that was not defined...
+            return None
+            
 
         # Your logic to modify the circuit, e.g., adding measurements
         num_qubits = quantum_circuit.num_qubits
@@ -60,9 +69,20 @@ class QiskitSimulator:
 
 def run_and_compare(qasm_content, shots, divergence_tolerance):
     qasm_content = qiskit_sim.add_measurements_to(qasm_content)
+    if qasm_content is None:
+        return True
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    qiskit_result = qiskit_sim.run_qasm(qasm_content, shots)[1]
-    braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
+
+    qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
+    if qiskit_res is None:
+        return True
+    qiskit_result = qiskit_res[1]
+
+    try:
+        braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
+    except ValueError:
+        # This _can_ mean there are no qubits set
+        return True
 
     qiskit_counts = {}
     for val, count in qiskit_result.get_counts().items():
@@ -96,10 +116,15 @@ qiskit_sim = QiskitSimulator()
 braket_sim = BraketSimulator()
 
 if fuzz:
+    import afl
     afl.init()
     qasm_content = sys.stdin.read()
-    assert run_and_compare(qasm_content, 100, 0.01)
+    assert run_and_compare(qasm_content, 10000, 0.01)
     os._exit(0)
+    # while afl.loop(100):
+    #     sys.stdin.seek(0)
+    #     qasm_content = sys.stdin.read()
+    #     assert run_and_compare(qasm_content, 10000, 0.01)
 else:
     # # Load QASM file
     # qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
