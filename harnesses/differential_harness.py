@@ -4,9 +4,12 @@ from braket.circuits import Circuit as BraketCircuit
 from braket.devices import LocalSimulator as BraketLocalSimulator
 from braket.ir.openqasm import Program as BraketProgram
 
-import qiskit
+from qiskit import QuantumCircuit, transpile
 from qiskit.qasm3 import dumps, loads
 from qiskit_aer import Aer
+
+from kl_divergence import get_kl_divergence
+
 import matplotlib.pyplot as plt
 import afl
 import os, sys, argparse
@@ -28,14 +31,11 @@ class QiskitSimulator:
         # Create a quantum circuit from QASM
         quantum_circuit = loads(qasm_content)
     
-        # Get the Aer simulator backend
-        simulator = Aer.get_backend('qasm_simulator')
-    
         # Transpile the circuit for the simulator
-        transpiled_circuit = qiskit.transpile(quantum_circuit, simulator)
+        transpiled_circuit = transpile(quantum_circuit, self.simulator)
     
         # Run the transpiled circuit on the simulator
-        job = simulator.run(transpiled_circuit, shots=shots)
+        job = self.simulator.run(transpiled_circuit, shots=shots)
     
         # Grab results from the job
         result = job.result()
@@ -45,7 +45,7 @@ class QiskitSimulator:
     # Generated programs don't necessarily output their results, so add measurements
     def add_measurements_to(self, qasm_content):
         # Create a quantum circuit from QASM
-        quantum_circuit = qiskit.QuantumCircuit.from_qasm_str(qasm_content)
+        quantum_circuit = QuantumCircuit.from_qasm_str(qasm_content)
 
         # Your logic to modify the circuit, e.g., adding measurements
         num_qubits = quantum_circuit.num_qubits
@@ -57,6 +57,25 @@ class QiskitSimulator:
         modified_qasm_string = dumps(quantum_circuit)
         
         return modified_qasm_string
+
+def run_and_compare(qasm_content, shots, divergence_tolerance):
+    qasm_content = qiskit_sim.add_measurements_to(qasm_content)
+    qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
+    qiskit_result = qiskit_sim.run_qasm(qasm_content, shots)[1]
+    braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
+
+    qiskit_counts = {}
+    for val, count in qiskit_result.get_counts().items():
+        qiskit_counts[str(val[::-1])] = count
+    braket_counts = {}
+    for val, count in braket_result.measurement_counts.items():
+        braket_counts[val] = count
+    # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
+
+    divergence = get_kl_divergence(qiskit_counts, braket_counts)
+    # print(f'divergence: {divergence}')
+
+    return divergence <= divergence_tolerance 
 
 def fetch_qelib1inc():
     with open('qelib1.inc', 'r') as file:
@@ -79,19 +98,13 @@ braket_sim = BraketSimulator()
 if fuzz:
     afl.init()
     qasm_content = sys.stdin.read()
-    qasm_content = qiskit_sim.add_measurements_to(qasm_content)
-    qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    run_qasm(qasm_content)
+    assert run_and_compare(qasm_content, 100, 0.01)
     os._exit(0)
 else:
-    # Load QASM file
-    qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
-    with open(qasm_file, "r") as file:
-        qasm_content = file.read()
-        qasm_content = qiskit_sim.add_measurements_to(qasm_content)
-        qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-        qiskit_result = qiskit_sim.run_qasm(qasm_content, 1000)[1]
-        braket_result = braket_sim.run_qasm(qasm_content, 1000)[1]
-        print(f'qiskit: {qiskit_result.get_counts()},\nbraket: {braket_result.measurement_counts}')
-        print(qasm_content)
-
+    # # Load QASM file
+    # qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
+    # with open(qasm_file, "r") as file:
+    #     qasm_content = file.read()
+    qasm_content = sys.stdin.read()
+    assert run_and_compare(qasm_content, 10000, 0.01)
+        
