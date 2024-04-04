@@ -9,6 +9,7 @@ from qiskit.qasm3 import dumps, loads
 from qiskit_aer import Aer
 from qiskit.qasm2.exceptions import QASM2ParseError
 from qiskit.transpiler.exceptions import CircuitTooWideForTarget
+from qiskit.qasm3.exceptions import QASM3ExporterError
 
 from kl_divergence import get_kl_divergence
 
@@ -63,7 +64,10 @@ class QiskitSimulator:
         quantum_circuit.measure_all()
 
         # Convert the modified QuantumCircuit back into QASM
-        modified_qasm_string = dumps(quantum_circuit)
+        try:
+            modified_qasm_string = dumps(quantum_circuit)
+        except QASM3ExporterError:
+            return None
         
         return modified_qasm_string
 
@@ -82,6 +86,9 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
         braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
     except ValueError:
         # This _can_ mean there are no qubits set
+        return True
+    except NotImplementedError:
+        # Reset is not implemented for braket
         return True
 
     qiskit_counts = {}
