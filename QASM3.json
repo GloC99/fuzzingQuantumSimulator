@@ -1,5 +1,5 @@
 {
-    "program": [["OPENQASM 3.0;\n#include \"stdgates.inc\"\n", "<statementsOrScopes>"]],
+    "program": [["OPENQASM 3.0;\ninclude \"stdgates.inc\"\n", "<statementsOrScopes>"], ["include \"stdgates.inc\"\n", "<statementsOrScopes>"], ["<statementsOrScopes>"]],
     "<statementsOrScopes>": [["<statementOrScope>"], ["<statementOrScope>", "\n", "<statementsOrScopes>"]],
     "<statementOrScope>": [["<statement>"], ["<scope>"]],
     "<statement>": [["<pragma>"], ["<annotations>", "<specificStatement>"], ["<specificStatement>"]],
