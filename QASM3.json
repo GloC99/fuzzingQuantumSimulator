@@ -84,7 +84,15 @@
         ["<gateModifiers>", "gphase() ", "<gateOperandList>", ";"],
         ["<gateModifiers>", "gphase() ", "<designator>", "<gateOperandList>", ";"],
         ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"]
+        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
+        ["<identifier>", "() ", "<gateOperandList>", ";"],
+        ["<identifier>", "() ", "<designator>", "<gateOperandList>", ";"],
+        ["<identifier>", "(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["<identifier>", "(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
+        ["gphase() ", "<gateOperandList>", ";"],
+        ["gphase() ", "<designator>", "<gateOperandList>", ";"],
+        ["gphase(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"]
     ],
     "<measureArrowAssignmentStatement>": [
         ["<measureExpression>", ";"],
@@ -236,14 +244,15 @@
     "<indexedIdentifier>": [["<identifier>", "<indexOperators>"], ["<identifier>"]],
     "<indexOperators>": [["<indexOperator>", "<indexOperators>"], ["<indexOperator>"]],
     "<returnSignature>": [[" -> ", "<scalarType>"]],
+    "<gateModifiers>": [["<gateModifier>", "<gateModifiers>"], ["<gateModifier>"]],
     "<gateModifier>": [
-        ["inv @"],
-        ["pow(", "<expression>", ") @"],
-        ["ctrl ", "(", "<expression>", ") @"],
-        ["negctrl ", "(", "<expression>", ") @"]
+        ["inv @ "],
+        ["pow(", "<expression>", ") @ "],
+        ["ctrl ", "(", "<expression>", ") @ "],
+        ["negctrl ", "(", "<expression>", ") @ "]
     ],
     "<scalarType>": [
-        ["bit ", "designator>"],
+        ["bit ", "<designator>"],
         ["int ", "<designator>"],
         ["uint ", "<designator>"],
         ["float ", "<designator>"],
@@ -283,8 +292,10 @@
     "<argumentDefinition>": [
         ["<scalarType>", " ", "<identifier>"],
         ["<qubitType>", " ", "<identifier>"],
-        ["creg", " ", "<identifier>", "<maybeDesignator>"],
-        ["qreg", " ", "<identifier>", "<maybeDesignator>"],
+        ["creg", " ", "<identifier>", "<designator>"],
+        ["qreg", " ", "<identifier>", "<designator>"],
+        ["creg", " ", "<identifier>"],
+        ["qreg", " ", "<identifier>"],
         ["<arrayReferenceType>", " ", "<identifier>"]
     ],
     "<argumentDefinitionList>": [
@@ -370,7 +381,7 @@
         ["<BinDigit>"]
     ],
     "<BinDigit>": [["0"], ["1"]],
-    "<OctalDigitLiteral>": [["0o", "<OctalInner>"]],
+    "<OctalIntegerLiteral>": [["0o", "<OctalInner>"]],
     "<OctalInner>": [["<OctalDigit>", "<OctalInner>"], ["<OctalDigit>"]],
     "<OctalDigit>": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"]],
     "<DecimalIntegerLiteral>": [["<DecInner>"]],
@@ -404,5 +415,21 @@
     ],
     "<BitstringLiteral>": [
         ["\"", "<BinaryInner>", "<BinDigit>", "\""]
+    ],
+    "<CalibrationBlock>": [
+        ["<CalibInner>"],
+        ["<CalibInner>", "<CalibrationBlock>"]
+    ],
+    "<CalibInner>": [
+        ["<NestedCalibrationBlock>"],
+        ["~"], ["["], ["{"], ["}"], ["]"]
+    ],
+    "<NestedCalibrationBlock>": [
+        ["{", "<NestedCalibrationBlock>", "}"],
+        ["{", "<CalibInner>", "}"],
+        ["{}"]
+    ],
+    "<calibrationGrammarStatement>": [
+        ["defcalgrammar \"openpulse\";"]
     ]
 }
