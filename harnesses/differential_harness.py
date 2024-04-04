@@ -7,9 +7,9 @@ from braket.ir.openqasm import Program as BraketProgram
 from qiskit import QuantumCircuit, transpile
 from qiskit.qasm3 import dumps, loads
 from qiskit_aer import Aer
-# from qiskit.qasm2.exceptions import QASM2ParseError
-from qiskit.transpiler.exceptions import CircuitTooWideForTarget
+from qiskit.circuit.exceptions import CircuitError
 from qiskit.qasm3.exceptions import QASM3ExporterError, QASM3ImporterError
+from qiskit.transpiler.exceptions import CircuitTooWideForTarget
 from openqasm3.parser import QASM3ParsingError
 
 from kl_divergence import get_kl_divergence
@@ -23,12 +23,8 @@ class BraketSimulator:
         self.simulator = BraketLocalSimulator()
 
     def run_qasm(self, qasm_content, shots):
-        # start_time = time.time()
         qc = BraketCircuit.from_ir(qasm_content)
-        # print(f'building braket circuit took {time.time() - start_time}')
-        # start_time = time.time()
         task = self.simulator.run(qc, shots=shots)
-        # print(f'simulating braket circuit took {time.time() - start_time}')
         return (qc, task.result())
 
 class QiskitSimulator:
@@ -36,22 +32,21 @@ class QiskitSimulator:
         self.simulator = Aer.get_backend('qasm_simulator')
 
     def run_qasm(self, qasm_content, shots):
-        # start_time = time.time()
-        # Create a quantum circuit from QASM
-        quantum_circuit = loads(qasm_content)
+        try:
+            quantum_circuit = loads(qasm_content)
+        except QASM3ImporterError as e:
+            print('QASM3ImporterError: ', e.message)
+            return None
 
         # Transpile the circuit for the simulator
         try:
             transpiled_circuit = transpile(quantum_circuit, self.simulator)
         except CircuitTooWideForTarget:
+            print('CircuitTooWideForTarget')
             return None
-        # print(f'building qiskit circuit took {time.time() - start_time}')
-        # start_time = time.time()
 
         # Run the transpiled circuit on the simulator
         job = self.simulator.run(transpiled_circuit, shots=shots)
-        # print(f'simulating qiskit circuit took {time.time() - start_time}')
-        # start_time = time.time()
 
         # Grab results from the job
         result = job.result()
@@ -66,8 +61,14 @@ class QiskitSimulator:
         except QASM3ParsingError:
             print('QASM3ParsingError')
             return None
-        except QASM3ImporterError:
-            print('QASM3ImporterError')
+        except QASM3ImporterError as e:
+            print('QASM3ImporterError ', e.message)
+            return None
+        except RecursionError as e:
+            print('RecursionError: ', e)
+            return None
+        except CircuitError as e:
+            print('CircuitError: ', e.message)
             return None
 
         # Your logic to modify the circuit, e.g., adding measurements
@@ -77,16 +78,18 @@ class QiskitSimulator:
         try:
             modified_qasm_string = dumps(quantum_circuit)
         except QASM3ExporterError:
+            print('QASM3ExporterError')
             return None
 
         return modified_qasm_string
 
 def run_and_compare(qasm_content, shots, divergence_tolerance):
-    # start_time = time.time()
-    qasm_content = qiskit_sim.add_measurements_to(qasm_content)
-    # cur_time = time.time()
-    # print(f'adding measurements took {cur_time - start_time}')
-    # cur_time = start_time
+    try:
+        qasm_content = qiskit_sim.add_measurements_to(qasm_content)
+    except AttributeError as e:
+        print('AttributeError: ', e)
+        return True
+
     if qasm_content is None:
         return True
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
@@ -100,9 +103,11 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
         braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
     except ValueError:
         # This _can_ mean there are no qubits set
+        print('ValueError')
         return True
     except NotImplementedError:
         # Reset is not implemented for braket
+        print('NotImplementedError')
         return True
 
     # cur_time = time.time()
@@ -118,10 +123,7 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
 
     divergence = get_kl_divergence(qiskit_counts, braket_counts)
-    # print(f'divergence: {divergence}')
-
-    # cur_time = time.time()
-    # print(f'computing divergence took {cur_time - start_time}')
+    print(f'divergence: {divergence}')
 
     return divergence <= divergence_tolerance
 
