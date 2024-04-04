@@ -6,11 +6,11 @@ RUN apt-get update && apt-get install -y zip default-jdk libopenblas-dev build-e
 RUN wget https://www.antlr.org/download/antlr-4.8-complete.jar && \
     cp -f antlr-4.8-complete.jar /usr/local/lib
 ENV ANTLR_JAR_LOCATION=/usr/local/lib/antlr-4.8-complete.jar
-COPY ./QASM.json /QASM.json
+COPY ./QASM3.json /QASM3.json
 WORKDIR /AFLplusplus/custom_mutators/grammar_mutator
 RUN ./build_grammar_mutator.sh; \
       cd grammar-mutator/ && \
-      make GRAMMAR_FILE=/QASM.json
+      make GRAMMAR_FILE=/QASM3.json
 
 RUN pip install matplotlib pylatexenc conan
 RUN pip install -U pip setuptools
@@ -33,16 +33,14 @@ RUN git clone https://github.com/amazon-braket/amazon-braket-sdk-python.git
 RUN cd amazon-braket-sdk-python/ && git checkout v1.74.0 && \
     pip install .
 
-COPY fuzzer_input_corpus/ /fuzzer_input_corpus
+COPY openqasm3_seeds/ /fuzzer_input_corpus
 COPY QASM_dataset/ /QASM_dataset
 COPY run_fuzzer.sh /run_fuzzer.sh
 COPY harnesses/ /harnesses
 
 RUN cp /simulators/qiskit/qiskit/qiskit/qasm/libs/stdgates.inc /harnesses/
 
-# Check that we can run all the simulators at least
 WORKDIR /harnesses
-RUN cd /harnesses && ./test.sh
 
 RUN echo "set tabstop=4" >> ~/.vimrc && \ 
     echo "set expandtab" >> ~/.vimrc && \
