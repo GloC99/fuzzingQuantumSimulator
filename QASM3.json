@@ -1,0 +1,408 @@
+{
+    "program": [["OPENQASM 3.0;\n#include \"stdgates.inc\"\n", "<statementsOrScopes>"]],
+    "<statementsOrScopes>": [["<statementOrScope>"], ["<statementOrScope>", "\n", "<statementsOrScopes>"]],
+    "<statementOrScope>": [["<statement>"], ["<scope>"]],
+    "<statement>": [["<pragma>"], ["<annotations>", "<specificStatement>"], ["<specificStatement>"]],
+    "<scope>": [["{\n", "<statementsOrScopes>", "\n}"]],
+    "<pragma>": [["#pragma ", "<identifier>"]],
+    "<annotations>": [["<annotation>", " "], ["<annotation>", " ", "<annotations>"]],
+    "<annotation>": [["@", " ", "<identifier>"]],
+    "<specificStatement>": [
+        ["<aliasDeclarationStatement>"],
+        ["<assignmentStatement>"],
+        ["<barrierStatement>"],
+        ["<boxStatement>"],
+        ["break;"],
+        ["<calStatement>"],
+        ["<calibrationGrammarStatement>"],
+        ["<classicalDeclarationStatement>"],
+        ["<constDeclarationStatement>"],
+        ["continue;"],
+        ["<defStatement>"],
+        ["<defcalStatement>"],
+        ["<delayStatement>"],
+        ["end;"],
+        ["<expressionStatement>"],
+        ["<externStatement>"],
+        ["<forStatement>"],
+        ["<gateCallStatement>"],
+        ["<gateStatement>"],
+        ["<ifStatement>"],
+        ["<ioDeclarationStatement>"],
+        ["<measureArrowAssignmentStatement>"],
+        ["<oldStyleDeclarationStatement>"],
+        ["<quantumDeclarationStatement>"],
+        ["<resetStatement>"],
+        ["<returnStatement>"],
+        ["<switchStatement>"],
+        ["<whileStatement>"]
+    ],
+    "<forStatement>": [
+        ["for ", "<scalarType>", " ", "<identifier>", " in ", "<setExpression>", " ", "<statementOrScope>"],
+        ["for ", "<scalarType>", " ", "<identifier>", " in [", "<rangeExpression>", "] ", "<statementOrScope>"],
+        ["for ", "<scalarType>", " ", "<identifier>", " in ", "<expression>", " ", "<statementOrScope>"]
+    ],
+    "<ifStatement>": [
+        ["if (", "<expression>", ") ", "<statementOrScope>"],
+        ["if (", "<expression>", ") ", "<statementOrScope>", " else ", "<statementOrScope>"]
+    ],
+    "<returnStatement>": [
+        ["return;"],
+        ["return ", "<expression>", ";"],
+        ["return ", "<measureExpression>", ";"]
+    ],
+    "<whileStatement>": [["while (", "<expression>", ")", "<statementOrScope>"]],
+    "<switchStatement>": [
+        ["switch (", "<expression>", ") {\n", "<switchCaseItems>", "}"],
+        ["switch (", "<expression>", ") { }"]
+    ],
+    "<switchCaseItems>": [
+        ["<switchCaseItem>", "<switchCaseItems>"],
+        ["<switchCaseItem>"]
+    ],
+    "<switchCaseItem>": [
+        ["case ", "<expressionList>", " ", "<scope>"],
+        ["default ", "<scope>"]
+    ],
+    "<barrierStatement>": [
+        ["barrier;"],
+        ["barrier ", "<gateOperandList>", ";"]
+    ],
+    "<boxStatement>": [
+        ["box ", "<designator>", " ", "<scope>"],
+        ["box ", "<scope>"]
+    ],
+    "<delayStatement>": [
+        ["delay", "<designator>", " ", "<gateOperandList>", ";"],
+        ["delay", "<designator>", ";"]
+    ],
+    "<gateCallStatement>": [
+        ["<gateModifiers>", "<identifier>", "() ", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "<identifier>", "() ", "<designator>", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "<identifier>", "(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "<identifier>", "(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "gphase() ", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "gphase() ", "<designator>", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"]
+    ],
+    "<measureArrowAssignmentStatement>": [
+        ["<measureExpression>", ";"],
+        ["<measureExpression>", "->", "<indexedIdentifier>", ";"]
+    ],
+    "<resetStatement>": [["reset ", "<gateOperand>", ";"]],
+    "<aliasDeclarationStatement>": [["let ", "<identifier>", " = ", "<aliasExpression>", ";"]],
+    "<classicalDeclarationStatement>": [
+        ["<scalarType>", " ", "<identifier>", ";"],
+        ["<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"],
+        ["<arrayType>", " ", "<identifier>", ";"],
+        ["<arrayType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
+    ],
+    "<constDeclarationStatement>": [
+        ["const ", "<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
+    ],
+    "<ioDeclarationStatement>": [
+        ["input ", "<scalarType>", " ", "<identifier>", ";"],
+        ["output ", "<scalarType>", " ", "<identifier>", ";"],
+        ["input ", "<arrayType>", " ", "<identifier>", ";"],
+        ["output ", "<arrayType>", " ", "<identifier>", ";"]
+    ],
+    "<oldStyleDeclarationStatement>": [
+        ["creg ", "<identifier>", " ", "<designator>", ";"],
+        ["creg ", "<identifier>", ";"],
+        ["qreg ", "<identifier>", " ", "<designator>", ";"],
+        ["qreg ", "<identifier>", ";"]
+    ],
+    "<quantumDeclarationStatement>": [["<qubitType>", " ", "<identifier>", ";"]],
+    "<defStatement>": [
+        ["def ", "<identifier>", "(", "<argumentDefinitionList>", ") ", "<returnSignature>", " ", "<scope>"],
+        ["def ", "<identifier>", "(", "<argumentDefinitionList>", ") ", "<scope>"],
+        ["def ", "<identifier>", "() ", "<returnSignature>", " ", "<scope>"],
+        ["def ", "<identifier>", "() ", "<scope>"]
+    ],
+    "<externStatement>": [
+        ["extern ", "<identifier>", "(", "<externArgumentList>", ") ", "<returnSignature>", ";"],
+        ["extern ", "<identifier>", "(", "<externArgumentList>", ");"],
+        ["extern ", "<identifier>", "() ", "<returnSignature>", ";"],
+        ["extern ", "<identifier>", "();"]
+    ],
+    "<gateStatement>": [
+        ["gate ", "<identifier>", "(", "<identifierList>", ") ", "<identifierList>", " ", "<scope>"],
+        ["gate ", "<identifier>", "() ", "<identifierList>", " ", "<scope>"],
+        ["gate ", "<identifier>", " ", "<identifierList>", " ", "<scope>"]
+    ],
+    "<assignmentStatement>": [
+        ["<indexedIdentifier>", " =", "<expression>", ";"],
+        ["<indexedIdentifier>", " =", "<measureExpression>", ";"],
+        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<expression>", ";"],
+        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<measureExpression>", ";"]
+    ],
+    "<expressionStatement>": [["<expression>", ";"]],
+    "<calStatement>": [
+        ["cal {", "<CalibrationBlock>", "}"],
+        ["cal {}"]
+    ],
+    "<defcalStatement>": [
+        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
+        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " {}"],
+        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
+        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " {}"],
+        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
+        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
+        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " {}"]
+    ],
+    "<expression>": [
+        ["(", "<expression>", ")"],
+        ["<expression>", "<indexOperator>"],
+        ["<expression>", " ** ", "<expression>"],
+        ["~", "<expression>"],
+        ["!", "<expression>"],
+        ["-", "<expression>"],
+        ["<expression>", "<BinaryOp>", "<expression>"],
+        ["<scalarType>", "(", "<expression>", ")"],
+        ["<arrayType>", "(", "<expression>", ")"],
+        ["durationof (", "<scope>", ")"],
+        ["<identifier>", "()"],
+        ["<identifier>", "(", "<expressionList>", ")"],
+        ["<identifier>"],
+        ["<BinaryIntegerLiteral>"],
+        ["<OctalIntegerLiteral>"],
+        ["<DecimalIntegerLiteral>"],
+        ["<FloatLiteral>"],
+        ["<ImaginaryLiteral>"],
+        ["<BooleanLiteral>"],
+        ["<BitstringLiteral>"],
+        ["<TimingLiteral>"],
+        ["<HardwareQubit>"]
+    ],
+    "<BinaryOp>": [
+        [" * "], [" / "], [" % "], [" + "], [" - "], [" << "], [" >> "],
+        [" < "], [" > "], [" <= "], [" >= "], [" == "], [" != "],
+        [" & "], [" | "], [" && "], [" || "]
+    ],
+    "<aliasExpression>": [
+        ["<expression>"],
+        ["<expression>", " ++ ", "<aliasExpression>"]
+    ],
+    "<declarationExpression>": [
+        ["<arrayLiteral>"], ["<expression>"], ["<measureExpression>"]
+    ],
+    "<measureExpression>": [["measure ", "<gateOperand>"]],
+    "<rangeExpression>": [
+        ["<expression>", ":", "<expression>", ":", "<expression>"],
+        ["<expression>", ":", "<expression>"],
+        ["<expression>", ":"],
+        [":", "<expression>"]
+    ],
+    "<setExpression>": [
+        ["{ ", "<expressions>", ",}"],
+        ["{ ", "<expressions>", "}"],
+        ["{,}"],
+        ["{}"]
+    ],
+    "<expressions>": [["<expression>", ", ", "<expressions>"], ["<expression>"]],
+    "<arrayLiteral>": [
+        ["{", "<expression>", "<arrayLiteralInner>", ",}"],
+        ["{", "<expression>", "<arrayLiteralInner>", "}"],
+        ["{", "<arrayLiteral>", "<arrayLiteralInner>", ",}"],
+        ["{", "<arrayLiteral>", "<arrayLiteralInner>", "}"],
+        ["{", "<expression>", ",}"],
+        ["{", "<expression>", "}"],
+        ["{", "<arrayLiteral>", ",}"],
+        ["{", "<arrayLiteral>", "}"]
+    ],
+    "<arrayLiteralInner>": [
+        [", ", "<expression>", "<arrayLiteralInner>"],
+        [", ", "<arrayLiteral>", "<arrayLiteralInner>"],
+        [", ", "<expression>"],
+        [", ", "<arrayLiteral>"]
+    ],
+    "<indexOperator>": [
+        ["[", "<setExpression>", "]"],
+        ["[", "<expression>", "<indexOperatorInner>", "]"],
+        ["[", "<setExpression>", "]"]
+    ],
+    "<indexOperatorInner>": [
+        [", ", "<expression>", "<indexOperatorInner>"],
+        [", ", "<rangeExpression>", "<indexOperatorInner>"],
+        [", ", "<expression>"],
+        [", ", "<rangeExpression>"]
+    ],
+    "<indexedIdentifier>": [["<identifier>", "<indexOperators>"], ["<identifier>"]],
+    "<indexOperators>": [["<indexOperator>", "<indexOperators>"], ["<indexOperator>"]],
+    "<returnSignature>": [[" -> ", "<scalarType>"]],
+    "<gateModifier>": [
+        ["inv @"],
+        ["pow(", "<expression>", ") @"],
+        ["ctrl ", "(", "<expression>", ") @"],
+        ["negctrl ", "(", "<expression>", ") @"]
+    ],
+    "<scalarType>": [
+        ["bit ", "designator>"],
+        ["int ", "<designator>"],
+        ["uint ", "<designator>"],
+        ["float ", "<designator>"],
+        ["angle ", "<designator>"],
+        ["bit"],
+        ["int"],
+        ["uint"],
+        ["float"],
+        ["angle"],
+        ["bool"],
+        ["duration"],
+        ["stretch"],
+        ["complex [", "<scalarType>", "]"]
+    ],
+    "<qubitType>": [["qubit ", "<designator>"], ["qubit"]],
+    "<arrayType>": [["array [", "<scalarType>", ", ", "<expressionList>", "]"]],
+    "<arrayReferenceType>": [
+        ["readonly array [", "<scalarType>", ", ", "<expressionList>", "]"],
+        ["readonly array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"],
+        ["mutable array [", "<scalarType>", ", ", "<expressionList>", "]"],
+        ["mutable array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"]
+    ],
+    "<designator>": [["[", "<expression>", "]"]],
+    "<defcalTarget>": [
+        ["measure ", "<identifier>"],
+        ["reset ", "<identifier>"],
+        ["delay ", "<identifier>"]
+    ],
+    "<defcalArgumentDefinition>": [
+        ["<expression>"], ["<argumentDefinition>"]
+    ],
+    "<defcalOperand>": [
+        ["<HardwareQubit>"], ["<identifier>"]
+    ],
+    "<gateOperand>": [["<indexedIdentifier>", "<HardwareQubit>"]],
+    "<externArgument>": [["<scalarType>"], ["<arrayReferenceType>"], ["creg ", "<identifier>"]],
+    "<argumentDefinition>": [
+        ["<scalarType>", " ", "<identifier>"],
+        ["<qubitType>", " ", "<identifier>"],
+        ["creg", " ", "<identifier>", "<maybeDesignator>"],
+        ["qreg", " ", "<identifier>", "<maybeDesignator>"],
+        ["<arrayReferenceType>", " ", "<identifier>"]
+    ],
+    "<argumentDefinitionList>": [
+        ["<argumentDefinition>", "<moreArguments>", ", "],
+        ["<argumentDefinition>", "<moreArguments>"],
+        ["<argumentDefinition>", ", "],
+        ["<argumentDefinition>"]
+    ],
+    "<moreArguments>": [
+        ["<argumentDefinition>", ", ", "<moreArguments>"],
+        ["<argumentDefinition>"]
+    ],
+    "<defcalArgumentDefinitionList>": [
+        ["<defcalArgumentDefinition>", " ", "<defcalArgDefInner>", ","],
+        ["<defcalArgumentDefinition>", " ", "<defcalArgDefInner>"],
+        ["<defcalArgumentDefinition>", ","],
+        ["<defcalArgumentDefinition>"]
+    ],
+    "<defcalArgDefInner>": [
+        [", ", "<defcalArgumentDefinition>", "<defcalArgDefInner>"],
+        [", ", "<defcalArgumentDefinition>"]
+    ],
+    "<defcalOperandList>": [
+        ["<defcalOperand>", "<defcalOpInner>", ","],
+        ["<defcalOperand>", "<defcalOpInner>"],
+        ["<defcalOperand>", ","],
+        ["<defcalOperand>"]
+    ],
+    "<defcalOpInner>": [
+        [" ,", "<defcalOperand>", "<defcalOpInner>"],
+        [" ,", "<defcalOperand>"]
+    ],
+    "<expressionList>": [
+        ["<expression>", "<exprListInner>", ","],
+        ["<expression>", "<exprListInner>"],
+        ["<expression>", ","],
+        ["<expression>"]
+    ],
+    "<exprListInner>": [
+        [", ", "<expression>", "<exprListInner>"],
+        [", ", "<expression>"]
+    ],
+    "<identifierList>": [
+        ["<identifier>", "<idListInner>", ","],
+        ["<identifier>", "<idListInner>"],
+        ["<identifier>", ","],
+        ["<identifier>"]
+    ],
+    "<idListInner>": [
+        [", ", "<identifier>", "<idListInner>"],
+        [", ", "<identifier>"]
+    ],
+    "<gateOperandList>": [
+        ["<gateOperand>", "<gateOpInner>", ","],
+        ["<gateOperand>", "<gateOpInner>"],
+        ["<gateOperand>", ","],
+        ["<gateOperand>"]
+    ],
+    "<gateOpInner>": [
+        [", ", "<gateOperand>", "<gateOpInner>"],
+        [", ", "<gateOperand>"]
+    ],
+    "<externArgumentList>": [
+        ["<externArgument>", "<extArgInner>", ","],
+        ["<externArgument>", "<extArgInner>"],
+        ["<externArgument>", ","],
+        ["<externArgument>"]
+    ],
+    "<extArgInner>": [
+        [", ", "<externArgument>", "<extArgInner>"],
+        [", ", "<externArgument>"]
+    ],
+    "<BooleanLiteral>": [["true"], ["false"]],
+    "<CompoundAssignmentOperator>": [
+        ["+="], ["-="], ["*="], ["/="], ["&="], ["|="], ["~="], ["^="], ["<<="], [">>="], ["%="], ["**="]
+    ],
+    "<BinaryIntegerLiteral>": [
+        ["0b", "<BinaryInner>"],
+        ["0B", "<BinaryInner>"]
+    ],
+    "<BinaryInner>": [
+        ["<BinDigit>", "<BinaryInner>"],
+        ["<BinDigit>"]
+    ],
+    "<BinDigit>": [["0"], ["1"]],
+    "<OctalDigitLiteral>": [["0o", "<OctalInner>"]],
+    "<OctalInner>": [["<OctalDigit>", "<OctalInner>"], ["<OctalDigit>"]],
+    "<OctalDigit>": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"]],
+    "<DecimalIntegerLiteral>": [["<DecInner>"]],
+    "<DecInner>": [["<DecDigit>", "<DecInner>"], ["<DecDigit>"]],
+    "<DecDigit>": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]],
+    "<identifier>": [["id1"], ["id2"], ["id3"], ["id4"], ["id5"], ["id6"], ["id7"], ["id8"]],
+    "<ImaginaryLiteral>": [
+        ["<DecimalIntegerLiteral>", " im"],
+        ["<FloatLiteral>", " im"]
+    ],
+    "<HardwareQubit>": [["$", "<DecInner>", "<DecDigit>"]],
+    "<FloatLiteral>": [
+        ["<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
+        [".", "<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
+        [".", "<DecimalIntegerLiteral>"],
+        ["<DecimalIntegerLiteral>", ".", "<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
+        ["<DecimalIntegerLiteral>", ".", "<DecimalIntegerLiteral>"],
+        ["<DecimalIntegerLiteral>", "."]
+    ],
+    "<FloatLiteralExponent>": [
+        ["e", "<DecimalIntegerLiteral>"],
+        ["e+", "<DecimalIntegerLiteral>"],
+        ["e-", "<DecimalIntegerLiteral>"]
+    ],
+    "<TimeUnit>": [
+        ["dt"], ["ns"], ["us"], ["µs"], ["ms"], ["s"]
+    ],
+    "<TimingLiteral>": [
+        ["<DecimalIntegerLiteral>", " ", "<TimeUnit>"],
+        ["<FloatLiteral>", " ", "<TimeUnit>"]
+    ],
+    "<BitstringLiteral>": [
+        ["\"", "<BinaryInner>", "<BinDigit>", "\""]
+    ]
+}
