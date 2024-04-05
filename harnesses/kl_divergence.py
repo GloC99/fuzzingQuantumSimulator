@@ -18,4 +18,3 @@ def get_kl_divergence(first_counts, second_counts):
             divergence += distr1[key] * math.log(distr1[key] / 1e-9)  # Pseudo-smoothing for missing keys
     
     return divergence
-
