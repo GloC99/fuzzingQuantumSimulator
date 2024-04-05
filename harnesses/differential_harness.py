@@ -155,7 +155,7 @@ if fuzz:
     import afl
     afl.init()
     qasm_content = sys.stdin.read()
-    qasm_content = qasm_content.replace('include "stdgates.inc"', stdgatesinc_raw)
+    qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.01)
     os._exit(0)
     # while afl.loop(10000):
@@ -168,6 +168,6 @@ else:
     # with open(qasm_file, "r") as file:
     #     qasm_content = file.read()
     qasm_content = sys.stdin.read()
-    qasm_content = qasm_content.replace('include "stdgates.inc"', stdgatesinc_raw)
+    qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.01)
 
