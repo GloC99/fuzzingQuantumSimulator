@@ -1,10 +1,11 @@
 {
-    "program": [["OPENQASM 3.0;\ninclude \"stdgates.inc\"\n", "<statementsOrScopes>"], ["include \"stdgates.inc\"\n", "<statementsOrScopes>"], ["<statementsOrScopes>"]],
+    "program": [
+        ["OPENQASM 3.0;\ninclude \"stdgates.inc\"\n", "<statementsOrScopes>"]
+    ],
     "<statementsOrScopes>": [["<statementOrScope>"], ["<statementOrScope>", "\n", "<statementsOrScopes>"]],
     "<statementOrScope>": [["<statement>"], ["<scope>"]],
-    "<statement>": [["<pragma>"], ["<annotations>", "<specificStatement>"], ["<specificStatement>"]],
+    "<statement>": [["<annotations>", "<specificStatement>"], ["<specificStatement>"]],
     "<scope>": [["{\n", "<statementsOrScopes>", "\n}"]],
-    "<pragma>": [["#pragma ", "<identifier>"]],
     "<annotations>": [["<annotation>", " "], ["<annotation>", " ", "<annotations>"]],
     "<annotation>": [["@", " ", "<identifier>"]],
     "<specificStatement>": [
@@ -16,11 +17,7 @@
         ["<calStatement>"],
         ["<classicalDeclarationStatement>"],
         ["continue;"],
-        ["<defcalStatement>"],
         ["<delayStatement>"],
-        ["end;"],
-        ["<expressionStatement>"],
-        ["<externStatement>"],
         ["<forStatement>"],
         ["<gateCallStatement>"],
         ["<gateStatement>"],
@@ -34,20 +31,20 @@
         ["<whileStatement>"]
     ],
     "<forStatement>": [
-        ["for ", "<scalarType>", " ", "<identifier>", " in ", "<setExpression>", " ", "<statementOrScope>"],
-        ["for ", "<scalarType>", " ", "<identifier>", " in [", "<rangeExpression>", "] ", "<statementOrScope>"],
-        ["for ", "<scalarType>", " ", "<identifier>", " in ", "<expression>", " ", "<statementOrScope>"]
+        ["for int ", "<identifier>", " in ", "<setExpression>", " ", "<statementOrScope>"],
+        ["for int ", "<identifier>", " in [", "<rangeExpression>", "] ", "<statementOrScope>"],
+        ["for int ", "<identifier>", " in ", "<expression>", " ", "<statementOrScope>"]
     ],
     "<ifStatement>": [
-        ["if (", "<expression>", ") ", "<statementOrScope>"],
-        ["if (", "<expression>", ") ", "<statementOrScope>", " else ", "<statementOrScope>"]
+        ["if (", "<Conditional>", ") ", "<statementOrScope>"],
+        ["if (", "<Conditional>", ") ", "<statementOrScope>", " else ", "<statementOrScope>"]
     ],
     "<returnStatement>": [
         ["return;"],
         ["return ", "<expression>", ";"],
         ["return ", "<measureExpression>", ";"]
     ],
-    "<whileStatement>": [["while (", "<expression>", ")", "<statementOrScope>"]],
+    "<whileStatement>": [["while (", "<Conditional>", ")", "<statementOrScope>"]],
     "<switchStatement>": [
         ["switch (", "<expression>", ") {\n", "<switchCaseItems>", "}"],
         ["switch (", "<expression>", ") { }"]
@@ -100,8 +97,7 @@
         ["<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
     ],
     "<ioDeclarationStatement>": [
-        ["input ", "<scalarType>", " ", "<identifier>", ";"],
-        ["output ", "<scalarType>", " ", "<identifier>", ";"]
+        ["input ", "<scalarType>", " ", "<identifier>", ";"]
     ],
     "<oldStyleDeclarationStatement>": [
         ["creg ", "<identifier>", " ", "<designator>", ";"],
@@ -110,12 +106,6 @@
         ["qreg ", "<identifier>", ";"]
     ],
     "<quantumDeclarationStatement>": [["<qubitType>", " ", "<identifier>", ";"]],
-    "<externStatement>": [
-        ["extern ", "<identifier>", "(", "<externArgumentList>", ") ", "<returnSignature>", ";"],
-        ["extern ", "<identifier>", "(", "<externArgumentList>", ");"],
-        ["extern ", "<identifier>", "() ", "<returnSignature>", ";"],
-        ["extern ", "<identifier>", "();"]
-    ],
     "<gateStatement>": [
         ["gate ", "<identifier>", "(", "<identifierList>", ") ", "<identifierList>", " ", "<scope>"],
         ["gate ", "<identifier>", "() ", "<identifierList>", " ", "<scope>"],
@@ -127,43 +117,20 @@
         ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<expression>", ";"],
         ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<measureExpression>", ";"]
     ],
-    "<expressionStatement>": [["<expression>", ";"]],
-    "<calStatement>": [
-        ["cal {", "<CalibrationBlock>", "}"],
-        ["cal {}"]
-    ],
-    "<defcalStatement>": [
-        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
-        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", "(", "<defcalArgumentDefinitionList>", ") ", "<defcalOperandList>", " {}"],
-        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
-        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", "() ", "<defcalOperandList>", " {}"],
-        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " ", "<returnSignature>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " ", "<returnSignature>", " {}"],
-        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " {", "<CalibrationBlock>", "}"],
-        ["defcal ", "<defcalTarget>", " ", "<defcalOperandList>", " {}"]
-    ],
     "<expression>": [
         ["(", "<expression>", ")"],
         ["<expression>", "<indexOperator>"],
-        ["<expression>", " ** ", "<expression>"],
         ["~", "<expression>"],
         ["!", "<expression>"],
         ["-", "<expression>"],
         ["<expression>", "<BinaryOp>", "<expression>"],
         ["<scalarType>", "(", "<expression>", ")"],
         ["durationof (", "<scope>", ")"],
-        ["<identifier>", "()"],
-        ["<identifier>", "(", "<expressionList>", ")"],
         ["<identifier>"],
         ["<BinaryIntegerLiteral>"],
         ["<OctalIntegerLiteral>"],
         ["<DecimalIntegerLiteral>"],
         ["<FloatLiteral>"],
-        ["<ImaginaryLiteral>"],
         ["<BooleanLiteral>"],
         ["<BitstringLiteral>"],
         ["<TimingLiteral>"],
@@ -171,8 +138,16 @@
     ],
     "<BinaryOp>": [
         [" * "], [" / "], [" % "], [" + "], [" - "], [" << "], [" >> "],
-        [" < "], [" > "], [" <= "], [" >= "], [" == "], [" != "],
+        ["<ComparisonOp>"],
         [" & "], [" | "], [" && "], [" || "]
+    ],
+    "<Conditional>": [
+        ["<expression>"],
+        ["!", "<expression>"],
+        ["<expression>", "<ComparisonOp>", "<expression>"]
+    ],
+    "<ComparisonOp>": [
+        [" < "], [" > "], [" <= "], [" >= "], [" == "], [" != "]
     ],
     "<aliasExpression>": [
         ["<expression>"],
@@ -234,15 +209,7 @@
     ],
     "<scalarType>": [
         ["bit ", "<designator>"],
-        ["int ", "<designator>"],
-        ["float ", "<designator>"],
-        ["angle ", "<designator>"],
-        ["bit"],
-        ["int"],
-        ["float"],
-        ["angle"],
-        ["bool"],
-        ["complex [", "<scalarType>", "]"]
+        ["bit"]
     ],
     "<qubitType>": [["qubit ", "<designator>"], ["qubit"]],
     "<arrayReferenceType>": [
@@ -252,18 +219,7 @@
         ["mutable array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"]
     ],
     "<designator>": [["[", "<expression>", "]"]],
-    "<defcalTarget>": [
-        ["measure ", "<identifier>"],
-        ["delay ", "<identifier>"]
-    ],
-    "<defcalArgumentDefinition>": [
-        ["<expression>"], ["<argumentDefinition>"]
-    ],
-    "<defcalOperand>": [
-        ["<HardwareQubit>"], ["<identifier>"]
-    ],
     "<gateOperand>": [["<indexedIdentifier>", "<HardwareQubit>"]],
-    "<externArgument>": [["<scalarType>"], ["<arrayReferenceType>"], ["creg ", "<identifier>"]],
     "<argumentDefinition>": [
         ["<scalarType>", " ", "<identifier>"],
         ["<qubitType>", " ", "<identifier>"],
@@ -282,26 +238,6 @@
     "<moreArguments>": [
         ["<argumentDefinition>", ", ", "<moreArguments>"],
         ["<argumentDefinition>"]
-    ],
-    "<defcalArgumentDefinitionList>": [
-        ["<defcalArgumentDefinition>", " ", "<defcalArgDefInner>", ","],
-        ["<defcalArgumentDefinition>", " ", "<defcalArgDefInner>"],
-        ["<defcalArgumentDefinition>", ","],
-        ["<defcalArgumentDefinition>"]
-    ],
-    "<defcalArgDefInner>": [
-        [", ", "<defcalArgumentDefinition>", "<defcalArgDefInner>"],
-        [", ", "<defcalArgumentDefinition>"]
-    ],
-    "<defcalOperandList>": [
-        ["<defcalOperand>", "<defcalOpInner>", ","],
-        ["<defcalOperand>", "<defcalOpInner>"],
-        ["<defcalOperand>", ","],
-        ["<defcalOperand>"]
-    ],
-    "<defcalOpInner>": [
-        [" ,", "<defcalOperand>", "<defcalOpInner>"],
-        [" ,", "<defcalOperand>"]
     ],
     "<expressionList>": [
         ["<expression>", "<exprListInner>", ","],
@@ -333,19 +269,9 @@
         [", ", "<gateOperand>", "<gateOpInner>"],
         [", ", "<gateOperand>"]
     ],
-    "<externArgumentList>": [
-        ["<externArgument>", "<extArgInner>", ","],
-        ["<externArgument>", "<extArgInner>"],
-        ["<externArgument>", ","],
-        ["<externArgument>"]
-    ],
-    "<extArgInner>": [
-        [", ", "<externArgument>", "<extArgInner>"],
-        [", ", "<externArgument>"]
-    ],
     "<BooleanLiteral>": [["true"], ["false"]],
     "<CompoundAssignmentOperator>": [
-        ["+="], ["-="], ["*="], ["/="], ["&="], ["|="], ["~="], ["^="], ["<<="], [">>="], ["%="], ["**="]
+        ["+="], ["-="], ["*="], ["/="], ["&="], ["~="], ["^="], ["<<="], [">>="]
     ],
     "<BinaryIntegerLiteral>": [
         ["0b", "<BinaryInner>"],
@@ -370,14 +296,9 @@
         ["cx"], ["cy"], ["cz"],
         ["cp"], ["crx"], ["cry"], ["crz"], ["ch"],
         ["swap"], ["ccx"], ["cswap"], ["cu"],
-        ["CX"], ["phase"], ["cphase"], ["id"], ["u1"], ["u2"], ["u3"],
-        ["row"], ["state"], ["get_pauli"], ["m"], ["bp"], ["cin"], ["k0"], ["g"], ["post"], ["num"], ["a"], ["counts1"], ["col"], ["shift_phase"], ["output_qubit"], ["bellprep"], ["all_ones"], ["q"], ["my_doubles"], ["magic_lvl0"], ["dimension_0"], ["rus_level_0"], ["c0"], ["send"], ["psi"], ["get_npaulis"], ["entangler"], ["success_0"], ["c1"], ["shot"], ["data_outcomes"], ["first_dimension"], ["outcome"], ["addr"], ["magic_lvl1_1"], ["counts0"], ["start_stretch"], ["b_in"], ["power"], ["ancilla"], ["syndrome"], ["buffer"], ["distill_and_buffer"], ["magic_lvl1_0"], ["syn"], ["input_qubit"], ["estimate_energy"], ["workspace"], ["shots"], ["cycle"], ["my_ints"], ["dimension_2"], ["c3"], ["dimension"], ["ans"], ["io"], ["gaussian"], ["l"], ["magic"], ["trial_circuit"], ["y"], ["a_in"], ["prec"], ["hadamard_layer"], ["b"], ["stride"], ["xprepare"], ["pre"], ["zfirst"], ["n_pairs"], ["scratch"], ["out_array"], ["iq"], ["counts_for_term"], ["failures"], ["xmeasure"], ["cout"], ["d"], ["my_defined_uints"], ["zlast"], ["majority"], ["success_1"], ["spec"], ["unmaj"], ["middle_stretch"], ["ymeasure"], ["distill"], ["checks"], ["in_array"], ["tabulate"], ["my_defined_floats"], ["c2"], ["points"], ["end_stretch"], ["temp"], ["pauli_measurement"], ["index"], ["pf"], ["Ty"], ["update_energy"], ["my_defined_float_row"], ["c"], ["theta"], ["r"], ["anc"], ["get_parameter"], ["n"], ["second_dimension"], ["zx90_ix"], ["buffer_size"], ["segment"], ["layer"], ["work"], ["dimension_1"]
+        ["CX"], ["phase"], ["cphase"], ["id"], ["u1"], ["u2"], ["u3"]
     ],
-    "<ImaginaryLiteral>": [
-        ["<DecimalIntegerLiteral>", " im"],
-        ["<FloatLiteral>", " im"]
-    ],
-    "<HardwareQubit>": [["$", "<DecInner>", "<DecDigit>"]],
+    "<HardwareQubit>": [["$", "<DecInner>"]],
     "<FloatLiteral>": [
         ["<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
         [".", "<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
@@ -400,18 +321,5 @@
     ],
     "<BitstringLiteral>": [
         ["\"", "<BinaryInner>", "<BinDigit>", "\""]
-    ],
-    "<CalibrationBlock>": [
-        ["<CalibInner>"],
-        ["<CalibInner>", "<CalibrationBlock>"]
-    ],
-    "<CalibInner>": [
-        ["<NestedCalibrationBlock>"],
-        ["~"], ["["], ["{"], ["}"], ["]"]
-    ],
-    "<NestedCalibrationBlock>": [
-        ["{", "<NestedCalibrationBlock>", "}"],
-        ["{", "<CalibInner>", "}"],
-        ["{}"]
     ]
 }

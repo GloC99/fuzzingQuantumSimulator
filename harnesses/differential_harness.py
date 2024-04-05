@@ -37,6 +37,9 @@ class QiskitSimulator:
         except QASM3ImporterError as e:
             print('QASM3ImporterError: ', e.message)
             return None
+        except QASM3ParsingError:
+            print('QASM3ParsingError run_qasm')
+            return None
 
         # Transpile the circuit for the simulator
         try:
@@ -59,7 +62,8 @@ class QiskitSimulator:
         try:
             quantum_circuit = loads(qasm_content)
         except QASM3ParsingError:
-            print('QASM3ParsingError')
+            print('QASM3ParsingError add_measurements_to')
+            print(qasm_content)
             return None
         except QASM3ImporterError as e:
             print('QASM3ImporterError ', e.message)
@@ -77,8 +81,8 @@ class QiskitSimulator:
         # Convert the modified QuantumCircuit back into QASM
         try:
             modified_qasm_string = dumps(quantum_circuit)
-        except QASM3ExporterError:
-            print('QASM3ExporterError')
+        except QASM3ExporterError as e:
+            print('QASM3ExporterError: ', e.message)
             return None
 
         return modified_qasm_string
@@ -105,9 +109,9 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
         # This _can_ mean there are no qubits set
         print('ValueError')
         return True
-    except NotImplementedError:
+    except NotImplementedError as e:
         # Reset is not implemented for braket
-        print('NotImplementedError')
+        print('NotImplementedError: ', e)
         return True
 
     # cur_time = time.time()
@@ -124,6 +128,8 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
 
     divergence = get_kl_divergence(qiskit_counts, braket_counts)
     print(f'divergence: {divergence}')
+    if divergence > divergence_tolerance:
+        print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
 
     return divergence <= divergence_tolerance
 
@@ -147,19 +153,21 @@ braket_sim = BraketSimulator()
 
 if fuzz:
     import afl
-    # afl.init()
-    # qasm_content = sys.stdin.read()
-    # assert run_and_compare(qasm_content, 10000, 0.01)
-    # os._exit(0)
-    while afl.loop(10000):
-        sys.stdin.seek(0)
-        qasm_content = sys.stdin.read()
-        assert run_and_compare(qasm_content, 10000, 0.01)
+    afl.init()
+    qasm_content = sys.stdin.read()
+    qasm_content = qasm_content.replace('include "stdgates.inc"', stdgatesinc_raw)
+    assert run_and_compare(qasm_content, 10000, 0.01)
+    os._exit(0)
+    # while afl.loop(10000):
+    #     sys.stdin.seek(0)
+    #     qasm_content = sys.stdin.read()
+    #     assert run_and_compare(qasm_content, 10000, 0.01)
 else:
     # # Load QASM file
     # qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
     # with open(qasm_file, "r") as file:
     #     qasm_content = file.read()
     qasm_content = sys.stdin.read()
+    qasm_content = qasm_content.replace('include "stdgates.inc"', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.01)
 
