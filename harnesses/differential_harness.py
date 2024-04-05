@@ -75,7 +75,8 @@ class QiskitSimulator:
             print('CircuitError: ', e.message)
             return None
 
-        # Your logic to modify the circuit, e.g., adding measurements
+        # Make sure there is 1 final set of measurements
+        quantum_circuit.remove_final_measurements()
         quantum_circuit.measure_all()
 
         # Convert the modified QuantumCircuit back into QASM
@@ -130,6 +131,7 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     print(f'divergence: {divergence}')
     if divergence > divergence_tolerance:
         print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
+        # print(qasm_content)
 
     return divergence <= divergence_tolerance
 
