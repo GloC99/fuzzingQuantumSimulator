@@ -14,11 +14,8 @@
         ["<boxStatement>"],
         ["break;"],
         ["<calStatement>"],
-        ["<calibrationGrammarStatement>"],
         ["<classicalDeclarationStatement>"],
-        ["<constDeclarationStatement>"],
         ["continue;"],
-        ["<defStatement>"],
         ["<defcalStatement>"],
         ["<delayStatement>"],
         ["end;"],
@@ -32,7 +29,6 @@
         ["<measureArrowAssignmentStatement>"],
         ["<oldStyleDeclarationStatement>"],
         ["<quantumDeclarationStatement>"],
-        ["<resetStatement>"],
         ["<returnStatement>"],
         ["<switchStatement>"],
         ["<whileStatement>"]
@@ -98,22 +94,14 @@
         ["<measureExpression>", ";"],
         ["<measureExpression>", "->", "<indexedIdentifier>", ";"]
     ],
-    "<resetStatement>": [["reset ", "<gateOperand>", ";"]],
     "<aliasDeclarationStatement>": [["let ", "<identifier>", " = ", "<aliasExpression>", ";"]],
     "<classicalDeclarationStatement>": [
         ["<scalarType>", " ", "<identifier>", ";"],
-        ["<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"],
-        ["<arrayType>", " ", "<identifier>", ";"],
-        ["<arrayType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
-    ],
-    "<constDeclarationStatement>": [
-        ["const ", "<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
+        ["<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
     ],
     "<ioDeclarationStatement>": [
         ["input ", "<scalarType>", " ", "<identifier>", ";"],
-        ["output ", "<scalarType>", " ", "<identifier>", ";"],
-        ["input ", "<arrayType>", " ", "<identifier>", ";"],
-        ["output ", "<arrayType>", " ", "<identifier>", ";"]
+        ["output ", "<scalarType>", " ", "<identifier>", ";"]
     ],
     "<oldStyleDeclarationStatement>": [
         ["creg ", "<identifier>", " ", "<designator>", ";"],
@@ -122,12 +110,6 @@
         ["qreg ", "<identifier>", ";"]
     ],
     "<quantumDeclarationStatement>": [["<qubitType>", " ", "<identifier>", ";"]],
-    "<defStatement>": [
-        ["def ", "<identifier>", "(", "<argumentDefinitionList>", ") ", "<returnSignature>", " ", "<scope>"],
-        ["def ", "<identifier>", "(", "<argumentDefinitionList>", ") ", "<scope>"],
-        ["def ", "<identifier>", "() ", "<returnSignature>", " ", "<scope>"],
-        ["def ", "<identifier>", "() ", "<scope>"]
-    ],
     "<externStatement>": [
         ["extern ", "<identifier>", "(", "<externArgumentList>", ") ", "<returnSignature>", ";"],
         ["extern ", "<identifier>", "(", "<externArgumentList>", ");"],
@@ -173,7 +155,6 @@
         ["-", "<expression>"],
         ["<expression>", "<BinaryOp>", "<expression>"],
         ["<scalarType>", "(", "<expression>", ")"],
-        ["<arrayType>", "(", "<expression>", ")"],
         ["durationof (", "<scope>", ")"],
         ["<identifier>", "()"],
         ["<identifier>", "(", "<expressionList>", ")"],
@@ -254,21 +235,16 @@
     "<scalarType>": [
         ["bit ", "<designator>"],
         ["int ", "<designator>"],
-        ["uint ", "<designator>"],
         ["float ", "<designator>"],
         ["angle ", "<designator>"],
         ["bit"],
         ["int"],
-        ["uint"],
         ["float"],
         ["angle"],
         ["bool"],
-        ["duration"],
-        ["stretch"],
         ["complex [", "<scalarType>", "]"]
     ],
     "<qubitType>": [["qubit ", "<designator>"], ["qubit"]],
-    "<arrayType>": [["array [", "<scalarType>", ", ", "<expressionList>", "]"]],
     "<arrayReferenceType>": [
         ["readonly array [", "<scalarType>", ", ", "<expressionList>", "]"],
         ["readonly array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"],
@@ -278,7 +254,6 @@
     "<designator>": [["[", "<expression>", "]"]],
     "<defcalTarget>": [
         ["measure ", "<identifier>"],
-        ["reset ", "<identifier>"],
         ["delay ", "<identifier>"]
     ],
     "<defcalArgumentDefinition>": [
@@ -417,7 +392,7 @@
         ["e-", "<DecimalIntegerLiteral>"]
     ],
     "<TimeUnit>": [
-        ["dt"], ["ns"], ["us"], ["µs"], ["ms"], ["s"]
+        ["dt"], ["ns"], ["us"], ["ms"], ["s"]
     ],
     "<TimingLiteral>": [
         ["<DecimalIntegerLiteral>", " ", "<TimeUnit>"],
@@ -438,8 +413,5 @@
         ["{", "<NestedCalibrationBlock>", "}"],
         ["{", "<CalibInner>", "}"],
         ["{}"]
-    ],
-    "<calibrationGrammarStatement>": [
-        ["defcalgrammar \"openpulse\";"]
     ]
 }
