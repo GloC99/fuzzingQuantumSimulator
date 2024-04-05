@@ -1,6 +1,6 @@
 {
     "program": [
-        ["OPENQASM 3.0;\ninclude \"stdgates.inc\"\n", "<statementsOrScopes>"]
+        ["OPENQASM 3.0;\ninclude \"stdgates.inc\";\n", "<statementsOrScopes>"]
     ],
     "<statementsOrScopes>": [["<statementOrScope>"], ["<statementOrScope>", "\n", "<statementsOrScopes>"]],
     "<statementOrScope>": [["<statement>"], ["<scope>"]],
@@ -208,10 +208,10 @@
         ["negctrl ", "(", "<expression>", ") @ "]
     ],
     "<scalarType>": [
-        ["bit ", "<designator>"],
+        ["bit", "<designator>"],
         ["bit"]
     ],
-    "<qubitType>": [["qubit ", "<designator>"], ["qubit"]],
+    "<qubitType>": [["qubit", "<designator>"], ["qubit"]],
     "<arrayReferenceType>": [
         ["readonly array [", "<scalarType>", ", ", "<expressionList>", "]"],
         ["readonly array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"],

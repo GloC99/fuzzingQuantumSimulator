@@ -163,8 +163,8 @@ faulthandler.enable()
 
 if fuzzing:
     afl.init()
-    afl.pause_instrumentation()
     qasm_content = sys.stdin.read()
+    afl.pause_instrumentation()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.01)
     os._exit(0)

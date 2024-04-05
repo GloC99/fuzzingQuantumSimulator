@@ -1,8 +1,7 @@
 FROM aflplusplus/aflplusplus:v4.10c
 
-RUN git clone https://github.com/Veri-Q/Benchmark.git
-RUN pip install python-afl
 RUN apt-get update && apt-get install -y zip default-jdk libopenblas-dev build-essential
+
 RUN wget https://www.antlr.org/download/antlr-4.8-complete.jar && \
     cp -f antlr-4.8-complete.jar /usr/local/lib
 ENV ANTLR_JAR_LOCATION=/usr/local/lib/antlr-4.8-complete.jar
@@ -37,6 +36,9 @@ COPY openqasm3_seeds/ /fuzzer_input_corpus
 COPY QASM_dataset/ /QASM_dataset
 COPY run_fuzzer.sh /run_fuzzer.sh
 COPY harnesses/ /harnesses
+
+COPY ./python-afl /python-afl
+RUN cd /python-afl && pip install .
 
 RUN cp /simulators/qiskit/qiskit/qiskit/qasm/libs/stdgates.inc /harnesses/
 
