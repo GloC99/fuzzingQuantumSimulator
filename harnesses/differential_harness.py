@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 import os, sys, argparse
 import time
 
+import afl
+
 class BraketSimulator:
     def __init__(self):
         self.simulator = BraketLocalSimulator()
@@ -97,7 +99,10 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
 
     if qasm_content is None:
         return True
-    qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
+
+    global fuzzing
+    if fuzzing:
+        afl.resume_instrumentation()
 
     qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
     if qiskit_res is None:
@@ -146,16 +151,19 @@ def fetch_stdgatesinc():
 parser = argparse.ArgumentParser(description="Example script to check for --no-fuzz flag.")
 parser.add_argument("--no-fuzz", action="store_true", help="Include to disable fuzzing")
 args = parser.parse_args()
-fuzz = not args.no_fuzz
+fuzzing = not args.no_fuzz
 
 qelib1inc_raw = fetch_qelib1inc()
 stdgatesinc_raw = fetch_stdgatesinc()
 qiskit_sim = QiskitSimulator()
 braket_sim = BraketSimulator()
 
-if fuzz:
-    import afl
+import faulthandler
+faulthandler.enable()
+
+if fuzzing:
     afl.init()
+    afl.pause_instrumentation()
     qasm_content = sys.stdin.read()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.01)
