@@ -111,9 +111,9 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
 
     try:
         braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
-    except ValueError:
+    except ValueError as e:
         # This _can_ mean there are no qubits set
-        print('ValueError')
+        print('ValueError: ', e)
         return True
     except NotImplementedError as e:
         # Reset is not implemented for braket

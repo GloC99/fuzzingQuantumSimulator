@@ -14,7 +14,6 @@
         ["<barrierStatement>"],
         ["<boxStatement>"],
         ["break;"],
-        ["<calStatement>"],
         ["<classicalDeclarationStatement>"],
         ["continue;"],
         ["<delayStatement>"],
@@ -70,22 +69,29 @@
         ["delay", "<designator>", ";"]
     ],
     "<gateCallStatement>": [
-        ["<gateModifiers>", "<identifier>", "() ", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "<identifier>", "() ", "<designator>", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "<identifier>", "(", "<expressionList>", ") ", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "<identifier>", "(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "gphase() ", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "gphase() ", "<designator>", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<gateOperandList>", ";"],
-        ["<gateModifiers>", "gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
-        ["<identifier>", "() ", "<gateOperandList>", ";"],
-        ["<identifier>", "() ", "<designator>", "<gateOperandList>", ";"],
-        ["<identifier>", "(", "<expressionList>", ") ", "<gateOperandList>", ";"],
-        ["<identifier>", "(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"],
-        ["gphase() ", "<gateOperandList>", ";"],
-        ["gphase() ", "<designator>", "<gateOperandList>", ";"],
-        ["gphase(", "<expressionList>", ") ", "<gateOperandList>", ";"],
-        ["gphase(", "<expressionList>", ") ", "<designator>", "<gateOperandList>", ";"]
+        ["<gateModifiers>", "<gateCallInner1>"],
+        ["<gateCallInner1>"]
+    ],
+    "<gateCallInner1>": [
+        ["<identifier>", "<gateCallInnerIdentifier>"],
+        ["gphase", "<gateCallInnerGphase>"]
+    ],
+    "<gateCallInnerIdentifier>": [
+        ["() ", "<gateOperandList>", ";"],
+        ["(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["<designator>", " ", "<gateOperandList>", ";"],
+        [" ", "<gateOperandList>", ";"]
+    ],
+    "<gateCallInnerGphase>": [
+        ["() ", "<gateOperandList>", ";"],
+        ["(", "<expressionList>", ") ", "<gateOperandList>", ";"],
+        ["();"],
+        ["(", "<expressionList>", ");"]
+    ],
+    "<gateCallInner2>": [
+        ["()"],
+        ["(", "<expressionList>", ")"],
+        ["<designator>"]
     ],
     "<measureArrowAssignmentStatement>": [
         ["<measureExpression>", ";"],
@@ -112,10 +118,10 @@
         ["gate ", "<identifier>", " ", "<identifierList>", " ", "<scope>"]
     ],
     "<assignmentStatement>": [
-        ["<indexedIdentifier>", " =", "<expression>", ";"],
-        ["<indexedIdentifier>", " =", "<measureExpression>", ";"],
-        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<expression>", ";"],
-        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", "<measureExpression>", ";"]
+        ["<indexedIdentifier>", " = ", "<expression>", ";"],
+        ["<indexedIdentifier>", " = ", "<measureExpression>", ";"],
+        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", " ", "<expression>", ";"],
+        ["<indexedIdentifier>", " ", "<CompoundAssignmentOperator>", " ", "<measureExpression>", ";"]
     ],
     "<expression>": [
         ["(", "<expression>", ")"],
@@ -214,12 +220,12 @@
     "<qubitType>": [["qubit", "<designator>"], ["qubit"]],
     "<arrayReferenceType>": [
         ["readonly array [", "<scalarType>", ", ", "<expressionList>", "]"],
-        ["readonly array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"],
+        ["readonly array [", "<scalarType>", ", ", "#dim = ", "<expression>", "]"],
         ["mutable array [", "<scalarType>", ", ", "<expressionList>", "]"],
-        ["mutable array [", "<scalarType>", ", ", "#dim =", "<expression>", "]"]
+        ["mutable array [", "<scalarType>", ", ", "#dim = ", "<expression>", "]"]
     ],
     "<designator>": [["[", "<expression>", "]"]],
-    "<gateOperand>": [["<indexedIdentifier>", "<HardwareQubit>"]],
+    "<gateOperand>": [["<indexedIdentifier>"], ["<HardwareQubit>"]],
     "<argumentDefinition>": [
         ["<scalarType>", " ", "<identifier>"],
         ["<qubitType>", " ", "<identifier>"],
@@ -260,9 +266,7 @@
         [", ", "<identifier>"]
     ],
     "<gateOperandList>": [
-        ["<gateOperand>", "<gateOpInner>", ","],
         ["<gateOperand>", "<gateOpInner>"],
-        ["<gateOperand>", ","],
         ["<gateOperand>"]
     ],
     "<gateOpInner>": [
