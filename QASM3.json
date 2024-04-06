@@ -4,10 +4,8 @@
     ],
     "<statementsOrScopes>": [["<statementOrScope>"], ["<statementOrScope>", "\n", "<statementsOrScopes>"]],
     "<statementOrScope>": [["<statement>"], ["<scope>"]],
-    "<statement>": [["<annotations>", "<specificStatement>"], ["<specificStatement>"]],
+    "<statement>": [["<specificStatement>"]],
     "<scope>": [["{\n", "<statementsOrScopes>", "\n}"]],
-    "<annotations>": [["<annotation>", " "], ["<annotation>", " ", "<annotations>"]],
-    "<annotation>": [["@", " ", "<identifier>"]],
     "<specificStatement>": [
         ["<aliasDeclarationStatement>"],
         ["<assignmentStatement>"],
@@ -21,7 +19,6 @@
         ["<gateCallStatement>"],
         ["<gateStatement>"],
         ["<ifStatement>"],
-        ["<ioDeclarationStatement>"],
         ["<measureArrowAssignmentStatement>"],
         ["<oldStyleDeclarationStatement>"],
         ["<quantumDeclarationStatement>"],
@@ -30,9 +27,9 @@
         ["<whileStatement>"]
     ],
     "<forStatement>": [
-        ["for int ", "<identifier>", " in ", "<setExpression>", " ", "<statementOrScope>"],
-        ["for int ", "<identifier>", " in [", "<rangeExpression>", "] ", "<statementOrScope>"],
-        ["for int ", "<identifier>", " in ", "<expression>", " ", "<statementOrScope>"]
+        ["for int ", "<LoopVarIdentifier>", " in ", "<setExpression>", " ", "<statementOrScope>"],
+        ["for int ", "<LoopVarIdentifier>", " in [", "<rangeExpression>", "] ", "<statementOrScope>"],
+        ["for int ", "<LoopVarIdentifier>", " in ", "<expression>", " ", "<statementOrScope>"]
     ],
     "<ifStatement>": [
         ["if (", "<Conditional>", ") ", "<statementOrScope>"],
@@ -73,11 +70,10 @@
         ["<gateCallInner1>"]
     ],
     "<gateCallInner1>": [
-        ["<identifier>", "<gateCallInnerIdentifier>"],
+        ["<AnyGateIdentifier>", "<gateCallInnerIdentifier>"],
         ["gphase", "<gateCallInnerGphase>"]
     ],
     "<gateCallInnerIdentifier>": [
-        ["() ", "<gateOperandList>", ";"],
         ["(", "<expressionList>", ") ", "<gateOperandList>", ";"],
         ["<designator>", " ", "<gateOperandList>", ";"],
         [" ", "<gateOperandList>", ";"]
@@ -97,25 +93,22 @@
         ["<measureExpression>", ";"],
         ["<measureExpression>", "->", "<indexedIdentifier>", ";"]
     ],
-    "<aliasDeclarationStatement>": [["let ", "<identifier>", " = ", "<aliasExpression>", ";"]],
+    "<aliasDeclarationStatement>": [["let ", "<AnyIdentifier>", " = ", "<aliasExpression>", ";"]],
     "<classicalDeclarationStatement>": [
-        ["<scalarType>", " ", "<identifier>", ";"],
-        ["<scalarType>", " ", "<identifier>", " = ", "<declarationExpression>", ";"]
-    ],
-    "<ioDeclarationStatement>": [
-        ["input ", "<scalarType>", " ", "<identifier>", ";"]
+        ["<scalarType>", " ", "<RegisterIdentifier>", ";"],
+        ["<scalarType>", " ", "<RegisterIdentifier>", " = ", "<declarationExpression>", ";"]
     ],
     "<oldStyleDeclarationStatement>": [
-        ["creg ", "<identifier>", " ", "<designator>", ";"],
-        ["creg ", "<identifier>", ";"],
-        ["qreg ", "<identifier>", " ", "<designator>", ";"],
-        ["qreg ", "<identifier>", ";"]
+        ["creg ", "<RegisterIdentifier>", " ", "<designator>", ";"],
+        ["creg ", "<RegisterIdentifier>", ";"],
+        ["qreg ", "<RegisterIdentifier>", " ", "<designator>", ";"],
+        ["qreg ", "<RegisterIdentifier>", ";"]
     ],
-    "<quantumDeclarationStatement>": [["<qubitType>", " ", "<identifier>", ";"]],
+    "<quantumDeclarationStatement>": [["<qubitType>", " ", "<RegisterIdentifier>", ";"]],
     "<gateStatement>": [
-        ["gate ", "<identifier>", "(", "<identifierList>", ") ", "<identifierList>", " ", "<scope>"],
-        ["gate ", "<identifier>", "() ", "<identifierList>", " ", "<scope>"],
-        ["gate ", "<identifier>", " ", "<identifierList>", " ", "<scope>"]
+        ["gate ", "<AnyGateIdentifier>", "(", "<gateParamsList>", ") ", "<gateArgsList>", " ", "<scope>"],
+        ["gate ", "<AnyGateIdentifier>", "() ", "<gateArgsList>", " ", "<scope>"],
+        ["gate ", "<AnyGateIdentifier>", " ", "<gateArgsList>", " ", "<scope>"]
     ],
     "<assignmentStatement>": [
         ["<indexedIdentifier>", " = ", "<expression>", ";"],
@@ -131,8 +124,7 @@
         ["-", "<expression>"],
         ["<expression>", "<BinaryOp>", "<expression>"],
         ["<scalarType>", "(", "<expression>", ")"],
-        ["durationof (", "<scope>", ")"],
-        ["<identifier>"],
+        ["<AnyIdentifier>"],
         ["<BinaryIntegerLiteral>"],
         ["<OctalIntegerLiteral>"],
         ["<DecimalIntegerLiteral>"],
@@ -203,7 +195,7 @@
         [", ", "<expression>"],
         [", ", "<rangeExpression>"]
     ],
-    "<indexedIdentifier>": [["<identifier>", "<indexOperators>"], ["<identifier>"]],
+    "<indexedIdentifier>": [["<RegisterIdentifier>", "<indexOperators>"], ["<RegisterIdentifier>"]],
     "<indexOperators>": [["<indexOperator>", "<indexOperators>"], ["<indexOperator>"]],
     "<returnSignature>": [[" -> ", "<scalarType>"]],
     "<gateModifiers>": [["<gateModifier>", "<gateModifiers>"], ["<gateModifier>"]],
@@ -226,25 +218,6 @@
     ],
     "<designator>": [["[", "<expression>", "]"]],
     "<gateOperand>": [["<indexedIdentifier>"], ["<HardwareQubit>"]],
-    "<argumentDefinition>": [
-        ["<scalarType>", " ", "<identifier>"],
-        ["<qubitType>", " ", "<identifier>"],
-        ["creg", " ", "<identifier>", "<designator>"],
-        ["qreg", " ", "<identifier>", "<designator>"],
-        ["creg", " ", "<identifier>"],
-        ["qreg", " ", "<identifier>"],
-        ["<arrayReferenceType>", " ", "<identifier>"]
-    ],
-    "<argumentDefinitionList>": [
-        ["<argumentDefinition>", "<moreArguments>", ", "],
-        ["<argumentDefinition>", "<moreArguments>"],
-        ["<argumentDefinition>", ", "],
-        ["<argumentDefinition>"]
-    ],
-    "<moreArguments>": [
-        ["<argumentDefinition>", ", ", "<moreArguments>"],
-        ["<argumentDefinition>"]
-    ],
     "<expressionList>": [
         ["<expression>", "<exprListInner>", ","],
         ["<expression>", "<exprListInner>"],
@@ -256,14 +229,34 @@
         [", ", "<expression>"]
     ],
     "<identifierList>": [
-        ["<identifier>", "<idListInner>", ","],
-        ["<identifier>", "<idListInner>"],
-        ["<identifier>", ","],
-        ["<identifier>"]
+        ["<AnyIdentifier>", "<idListInner>", ","],
+        ["<AnyIdentifier>", "<idListInner>"],
+        ["<AnyIdentifier>", ","],
+        ["<AnyIdentifier>"]
     ],
     "<idListInner>": [
-        [", ", "<identifier>", "<idListInner>"],
-        [", ", "<identifier>"]
+        [", ", "<AnyIdentifier>", "<idListInner>"],
+        [", ", "<AnyIdentifier>"]
+    ],
+    "<gateArgsList>": [
+        ["<GateArgIdentifier>", "<gateArgListInner>", ","],
+        ["<GateArgIdentifier>", "<gateArgListInner>"],
+        ["<GateArgIdentifier>", ","],
+        ["<GateArgIdentifier>"]
+    ],
+    "<gateArgListInner>": [
+        [", ", "<GateArgIdentifier>", "<gateArgListInner>"],
+        [", ", "<GateArgIdentifier>"]
+    ],
+    "<gateParamsList>": [
+        ["<GateParamIdentifier>", "<gateParamsListInner>", ","],
+        ["<GateParamIdentifier>", "<gateParamsListInner>"],
+        ["<GateParamIdentifier>", ","],
+        ["<GateParamIdentifier>"]
+    ],
+    "<gateParamsListInner>": [
+        [", ", "<GateParamIdentifier>", "<gateParamsListInner>"],
+        [", ", "<GateParamIdentifier>"]
     ],
     "<gateOperandList>": [
         ["<gateOperand>", "<gateOpInner>"],
@@ -292,8 +285,18 @@
     "<DecimalIntegerLiteral>": [["<DecInner>"]],
     "<DecInner>": [["<DecDigit>", "<DecInner>"], ["<DecDigit>"]],
     "<DecDigit>": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]],
-    "<identifier>": [
-        ["id1"], ["id2"], ["id3"],
+    "<AnyIdentifier>": [
+        ["<AnyGateIdentifier>"],
+        ["<RegisterIdentifier>"],
+        ["pi"]
+    ],
+    "<AnyGateIdentifier>": [
+        ["<StdGateIdentifier>"],
+        ["<GateParamIdentifier>"],
+        ["<GateArgIdentifier>"],
+        ["<NewGateIdentifier>"]
+    ],
+    "<StdGateIdentifier>": [
         ["x"], ["y"], ["z"],
         ["h"], ["s"], ["sdg"], ["sx"],
         ["rx"], ["ry"], ["rz"],
@@ -301,6 +304,21 @@
         ["cp"], ["crx"], ["cry"], ["crz"], ["ch"],
         ["swap"], ["ccx"], ["cswap"], ["cu"],
         ["CX"], ["phase"], ["cphase"], ["id"], ["u1"], ["u2"], ["u3"]
+    ],
+    "<NewGateIdentifier>": [
+        ["g1"], ["g2"], ["g3"]
+    ],
+    "<GateParamIdentifier>": [
+        ["theta"], ["thi"], ["gamma"], ["lambda"]
+    ],
+    "<GateArgIdentifier>": [
+        ["a"], ["b"], ["c"], ["d"]
+    ],
+    "<RegisterIdentifier>": [
+        ["r1"], ["r2"], ["r3"]
+    ],
+    "<LoopVarIdentifier>": [
+        ["lv1"], ["lv2"], ["lv3"]
     ],
     "<HardwareQubit>": [["$", "<DecInner>"]],
     "<FloatLiteral>": [
