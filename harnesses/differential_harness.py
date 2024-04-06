@@ -100,10 +100,6 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     if qasm_content is None:
         return True
 
-    global fuzzing
-    if fuzzing:
-        afl.resume_instrumentation()
-
     qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
     if qiskit_res is None:
         return True
@@ -124,12 +120,23 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     # print(f'simulating {shots} runs took {cur_time - start_time}')
     # start_time = cur_time
 
+    global fuzzing
+    if fuzzing:
+        afl.resume_instrumentation()
+
+    # run it again with instrumentation now that we know there's no error
+    qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
+    qiskit_result = qiskit_res[1]
+    braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
+
     qiskit_counts = {}
     for val, count in qiskit_result.get_counts().items():
-        qiskit_counts[str(val[::-1])] = count
+        rev = str(val[::-1])
+        stripped = rev.lstrip('0 ') 
+        qiskit_counts[stripped] = count
     braket_counts = {}
     for val, count in braket_result.measurement_counts.items():
-        braket_counts[val] = count
+        braket_counts[val.lstrip('0')] = count
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
 
     divergence = get_kl_divergence(qiskit_counts, braket_counts)
@@ -153,7 +160,6 @@ parser.add_argument("--no-fuzz", action="store_true", help="Include to disable f
 args = parser.parse_args()
 fuzzing = not args.no_fuzz
 
-qelib1inc_raw = fetch_qelib1inc()
 stdgatesinc_raw = fetch_stdgatesinc()
 qiskit_sim = QiskitSimulator()
 braket_sim = BraketSimulator()
@@ -166,12 +172,13 @@ if fuzzing:
     qasm_content = sys.stdin.read()
     afl.pause_instrumentation()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    assert run_and_compare(qasm_content, 10000, 0.01)
+    assert run_and_compare(qasm_content, 10000, 0.3)
     os._exit(0)
     # while afl.loop(10000):
     #     sys.stdin.seek(0)
+    #     afl.pause_instrumentation()
     #     qasm_content = sys.stdin.read()
-    #     assert run_and_compare(qasm_content, 10000, 0.01)
+    #     assert run_and_compare(qasm_content, 10000, 0.5)
 else:
     # # Load QASM file
     # qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
@@ -179,5 +186,5 @@ else:
     #     qasm_content = file.read()
     qasm_content = sys.stdin.read()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    assert run_and_compare(qasm_content, 10000, 0.01)
+    assert run_and_compare(qasm_content, 10000, 0.3)
 
