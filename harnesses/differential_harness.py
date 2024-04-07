@@ -24,16 +24,34 @@ class BraketSimulator:
     def __init__(self):
         self.simulator = BraketLocalSimulator()
 
-    def run_qasm(self, qasm_content, shots):
-        qc = BraketCircuit.from_ir(qasm_content)
-        task = self.simulator.run(qc, shots=shots)
-        return (qc, task.result())
+    def build_circuit(self, qasm_content):
+        try:
+            quantum_circuit = BraketCircuit.from_ir(qasm_content)
+        except ValueError as e:
+            # This _can_ mean there are no qubits set
+            print('ValueError: ', e)
+            return None
+        except NotImplementedError as e:
+            # Reset is not implemented for braket
+            print('NotImplementedError: ', e)
+            return None
+
+        return quantum_circuit
+
+    def run_circuit(self, quantum_circuit, shots):
+        task = self.simulator.run(quantum_circuit, shots=shots)
+        return (quantum_circuit, task.result())
+
+#    def run_qasm(self, qasm_content, shots):
+#        qc = BraketCircuit.from_ir(qasm_content)
+#        task = self.simulator.run(qc, shots=shots)
+#        return (qc, task.result())
 
 class QiskitSimulator:
     def __init__(self):
         self.simulator = Aer.get_backend('qasm_simulator')
 
-    def run_qasm(self, qasm_content, shots):
+    def build_circuit(self, qasm_content):
         try:
             quantum_circuit = loads(qasm_content)
         except QASM3ImporterError as e:
@@ -50,13 +68,42 @@ class QiskitSimulator:
             print('CircuitTooWideForTarget')
             return None
 
+        return transpiled_circuit
+
+    def run_circuit(self, quantum_circuit, shots):
         # Run the transpiled circuit on the simulator
-        job = self.simulator.run(transpiled_circuit, shots=shots)
+        job = self.simulator.run(quantum_circuit, shots=shots)
 
         # Grab results from the job
         result = job.result()
 
         return (quantum_circuit, result)
+
+
+#     def run_qasm(self, qasm_content, shots):
+#         try:
+#             quantum_circuit = loads(qasm_content)
+#         except QASM3ImporterError as e:
+#             print('QASM3ImporterError: ', e.message)
+#             return None
+#         except QASM3ParsingError:
+#             print('QASM3ParsingError run_qasm')
+#             return None
+#
+#         # Transpile the circuit for the simulator
+#         try:
+#             transpiled_circuit = transpile(quantum_circuit, self.simulator)
+#         except CircuitTooWideForTarget:
+#             print('CircuitTooWideForTarget')
+#             return None
+#
+#         # Run the transpiled circuit on the simulator
+#         job = self.simulator.run(transpiled_circuit, shots=shots)
+#
+#         # Grab results from the job
+#         result = job.result()
+#
+#         return (quantum_circuit, result)
 
     # Generated programs don't necessarily output their results, so add measurements
     def add_measurements_to(self, qasm_content):
@@ -65,7 +112,6 @@ class QiskitSimulator:
             quantum_circuit = loads(qasm_content)
         except QASM3ParsingError:
             print('QASM3ParsingError add_measurements_to')
-            print(qasm_content)
             return None
         except QASM3ImporterError as e:
             print('QASM3ImporterError ', e.message)
@@ -81,6 +127,18 @@ class QiskitSimulator:
         quantum_circuit.remove_final_measurements()
         quantum_circuit.measure_all()
 
+        # Transpile the circuit for the simulator, to check we aren't wasting our time
+        # on an input that won't load back in
+        try:
+            transpiled_circuit = transpile(quantum_circuit, self.simulator)
+        except CircuitTooWideForTarget:
+            print('CircuitTooWideForTarget')
+            return None
+
+        # Run the transpiled circuit on the simulator, just to check that it works
+        # so far this has never failed / crashed... hence low shots
+        job = self.simulator.run(transpiled_circuit, shots=1)
+
         # Convert the modified QuantumCircuit back into QASM
         try:
             modified_qasm_string = dumps(quantum_circuit)
@@ -91,52 +149,52 @@ class QiskitSimulator:
         return modified_qasm_string
 
 def run_and_compare(qasm_content, shots, divergence_tolerance):
-    try:
-        qasm_content = qiskit_sim.add_measurements_to(qasm_content)
-    except AttributeError as e:
-        print('AttributeError: ', e)
-        return True
+    global braket_sim, qiskit_sim
+    start_time = time.time()
+    qasm_content = qiskit_sim.add_measurements_to(qasm_content)
+    print(f'add measurements took: {time.time() - start_time}')
+    start_time = time.time()
 
     if qasm_content is None:
         return True
-
-    qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
-    if qiskit_res is None:
-        return True
-    qiskit_result = qiskit_res[1]
-
-    try:
-        braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
-    except ValueError as e:
-        # This _can_ mean there are no qubits set
-        print('ValueError: ', e)
-        return True
-    except NotImplementedError as e:
-        # Reset is not implemented for braket
-        print('NotImplementedError: ', e)
-        return True
-
-    # cur_time = time.time()
-    # print(f'simulating {shots} runs took {cur_time - start_time}')
-    # start_time = cur_time
 
     global fuzzing
     if fuzzing:
         afl.resume_instrumentation()
 
-    # run it again with instrumentation now that we know there's no error
-    qiskit_res = qiskit_sim.run_qasm(qasm_content, shots)
-    qiskit_result = qiskit_res[1]
-    braket_result = braket_sim.run_qasm(qasm_content, shots)[1]
+    braket_circuit = braket_sim.build_circuit(qasm_content)
+    qiskit_circuit = qiskit_sim.build_circuit(qasm_content)
+
+    if braket_circuit is None or qiskit_circuit is None:
+        return True
+
+    braket_result = braket_sim.run_circuit(braket_circuit, shots)[1]
+    qiskit_circuit, qiskit_result = qiskit_sim.run_circuit(qiskit_circuit, shots)
+
+    braket_output_len = None
+    braket_counts = {}
+    for output, count in braket_result.measurement_counts.items():
+        if braket_output_len is None:
+            braket_output_len = len(output)
+        else:
+            assert len(output) == braket_output_len
+        braket_counts[output] = count
+
+    # Iterate through the gates and find modified quantum register indexes
+    modified_qubits = set()
+    for instruction, qargs, _ in qiskit_circuit.data:
+        if instruction.name != 'measure' and instruction.name != 'barrier':
+            for qubit in qargs:
+                modified_qubits.add(qubit._index)
+    # print(f'modified qubits: {modified_qubits}')
+    modified_qubits = sorted(modified_qubits)
 
     qiskit_counts = {}
-    for val, count in qiskit_result.get_counts().items():
-        rev = str(val[::-1])
-        stripped = rev.lstrip('0 ') 
-        qiskit_counts[stripped] = count
-    braket_counts = {}
-    for val, count in braket_result.measurement_counts.items():
-        braket_counts[val.lstrip('0')] = count
+    for output, count in qiskit_result.get_counts().items():
+        rev = str(output[::-1])
+        array = list(map(lambda x: rev[x], modified_qubits))
+        string = ''.join(array)
+        qiskit_counts[string] = count
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
 
     divergence = get_kl_divergence(qiskit_counts, braket_counts)
@@ -144,6 +202,9 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     if divergence > divergence_tolerance:
         print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
         # print(qasm_content)
+
+    print(f'rerunning with instrumentation took: {time.time() - start_time}')
+    start_time = time.time()
 
     return divergence <= divergence_tolerance
 
@@ -164,20 +225,17 @@ stdgatesinc_raw = fetch_stdgatesinc()
 qiskit_sim = QiskitSimulator()
 braket_sim = BraketSimulator()
 
-import faulthandler
-faulthandler.enable()
-
 if fuzzing:
     afl.init()
     qasm_content = sys.stdin.read()
     afl.pause_instrumentation()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    assert run_and_compare(qasm_content, 10000, 0.3)
+    assert run_and_compare(qasm_content, 1000, 0.20)
     os._exit(0)
     # while afl.loop(10000):
     #     sys.stdin.seek(0)
-    #     afl.pause_instrumentation()
     #     qasm_content = sys.stdin.read()
+    #     afl.pause_instrumentation()
     #     assert run_and_compare(qasm_content, 10000, 0.5)
 else:
     # # Load QASM file
@@ -186,5 +244,5 @@ else:
     #     qasm_content = file.read()
     qasm_content = sys.stdin.read()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    assert run_and_compare(qasm_content, 10000, 0.3)
+    assert run_and_compare(qasm_content, 10000, 0.1)
 
