@@ -5,9 +5,13 @@ def counts_to_distribution(counts):
     distribution = {outcome: count / total_shots for outcome, count in counts.items()}
     return distribution
 
-def get_kl_divergence(first_counts, second_counts):
+def get_kl_divergence(first_counts, second_counts, counts = True):
     distr1 = counts_to_distribution(first_counts)
-    distr2 = counts_to_distribution(second_counts)
+
+    if counts:
+        distr2 = counts_to_distribution(second_counts)
+    else:
+        distr2 = second_counts
 
     # Kullback-Leibler Divergence
     divergence = 0
