@@ -174,9 +174,9 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     modified_qubits = sorted(modified_qubits)
 
     qiskit_counts = {}
+    # print(f'qiskit_raw: {qiskit_result.get_counts()}')
     for output, count in qiskit_result.get_counts().items():
-        rev = str(output[::-1])
-        array = list(map(lambda x: rev[x], modified_qubits))
+        array = list(list(map(lambda x: output[x], modified_qubits))[::-1])
         string = ''.join(array)
         qiskit_counts[string] = count
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
@@ -224,5 +224,5 @@ if fuzzing:
 else:
     qasm_content = sys.stdin.read()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
-    assert run_and_compare(qasm_content, 10000, 0.1)
+    assert run_and_compare(qasm_content, 1000000, 0.05)
 

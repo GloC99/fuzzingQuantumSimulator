@@ -8,4 +8,4 @@ export AFL_CUSTOM_MUTATOR_ONLY=1
 # export AFL_DEBUG_CHILD=1
 
 # note the longer timeout, as imports take up 1 second on their own!
-py-afl-fuzz -i /fuzzer_input_corpus -o /timed_OUTPUTS -t 4000 -- /harnesses/differential_harness.py
+py-afl-fuzz -i /fuzzer_input_corpus -o /OUTPUTS -t 4000 -- /harnesses/differential_harness.py
