@@ -33,7 +33,10 @@ RUN cd amazon-braket-sdk-python/ && git checkout v1.74.0 && \
     pip install .
 
 COPY openqasm3_seeds/ /fuzzer_input_corpus
-COPY QASM_dataset/ /QASM_dataset
+# Extract all the subfolders into the root
+RUN cd /fuzzer_input_corpus; for DIR in */; do mv $DIR/* .; rm -rf $DIR; done;
+
+COPY run_many_fuzzers.sh /run_many_fuzzers.sh
 COPY run_fuzzer.sh /run_fuzzer.sh
 COPY harnesses/ /harnesses
 

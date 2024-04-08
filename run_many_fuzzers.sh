@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p /fuzzer_logs/
+
 export RANDOM_MUTATION_STEPS=50
 export RANDOM_RECURSIVE_MUTATION_STEPS=50
 export SPLICING_MUTATION_STEPS=50
