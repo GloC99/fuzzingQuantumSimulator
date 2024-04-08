@@ -128,7 +128,9 @@ class QiskitSimulator:
         except TypeError as e:
             print('QiskitSimulator.add_measurements_to TypeError: ', e)
             return None
-
+        except OverflowError as e:
+            print('QiskitSimulator.add_measurements_to OverflowError: ', e)
+            return None
 
         return modified_qasm_string
 
@@ -174,13 +176,13 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
         if instruction.name != 'measure' and instruction.name != 'barrier':
             for qubit in qargs:
                 modified_qubits.add(qubit._index)
-    # print(f'modified qubits: {modified_qubits}')
     modified_qubits = sorted(modified_qubits)
 
     qiskit_counts = {}
-    # print(f'qiskit_raw: {qiskit_result.get_counts()}')
+    # print(f'qiskit_raw: {qiskit_result.get_counts()}, modified: {modified_qubits}')
     for output, count in qiskit_result.get_counts().items():
-        array = list(list(map(lambda x: output[x], modified_qubits))[::-1])
+        rev = output[::-1]
+        array = list(map(lambda x: rev[x], modified_qubits))
         string = ''.join(array)
         qiskit_counts[string] = count
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
