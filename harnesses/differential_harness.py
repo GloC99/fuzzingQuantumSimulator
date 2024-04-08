@@ -30,14 +30,14 @@ class BraketSimulator:
             quantum_circuit = BraketCircuit.from_ir(qasm_content)
         except ValueError as e:
             # This _can_ mean there are no qubits set
-            print('ValueError: ', e)
+            print('Braket.run_circuit ValueError: ', e)
             return None
         except NotImplementedError as e:
             # Reset is not implemented for braket
-            print('NotImplementedError: ', e)
+            print('Braket.run_circuit NotImplementedError: ', e)
             return None
         except BraketParsingError as e:
-            print('Braket QASM3ParsingError: ', e)
+            print('Braket.run_circuit QASM3ParsingError: ', e)
             return None
 
         return quantum_circuit
@@ -58,17 +58,17 @@ class QiskitSimulator:
         try:
             quantum_circuit = loads(qasm_content)
         except QASM3ImporterError as e:
-            print('QASM3ImporterError: ', e.message)
+            print('QiskitSimulator.build_circuit QASM3ImporterError: ', e.message)
             return None
         except QASM3ParsingError:
-            print('QASM3ParsingError run_qasm')
+            print('QiskitSimulator.build_circuit QASM3ParsingError run_qasm')
             return None
 
         # Transpile the circuit for the simulator
         try:
             transpiled_circuit = transpile(quantum_circuit, self.simulator)
         except CircuitTooWideForTarget:
-            print('CircuitTooWideForTarget')
+            print('QiskitSimulator.build_circuit CircuitTooWideForTarget')
             return None
 
         return transpiled_circuit
@@ -88,19 +88,19 @@ class QiskitSimulator:
         try:
             quantum_circuit = loads(qasm_content)
         except QASM3ParsingError:
-            print('QASM3ParsingError add_measurements_to')
+            print('QiskitSimulator.add_measurements_to QASM3ParsingError add_measurements_to')
             return None
         except QASM3ImporterError as e:
-            print('QASM3ImporterError ', e.message)
+            print('QiskitSimulator.add_measurements_to QASM3ImporterError ', e.message)
             return None
         except RecursionError as e:
-            print('RecursionError: ', e)
+            print('QiskitSimulator.add_measurements_to RecursionError: ', e)
             return None
         except CircuitError as e:
-            print('CircuitError: ', e.message)
+            print('QiskitSimulator.add_measurements_to CircuitError: ', e.message)
             return None
         except IndexError as e:
-            print('IndexError: ', e)
+            print('QiskitSimulator.add_measurements_to IndexError: ', e)
             return None
 
         # Make sure there is 1 final set of measurements
@@ -112,7 +112,7 @@ class QiskitSimulator:
         try:
             transpiled_circuit = transpile(quantum_circuit, self.simulator)
         except CircuitTooWideForTarget:
-            print('CircuitTooWideForTarget')
+            print('QiskitSimulator.add_measurements_to CircuitTooWideForTarget')
             return None
 
         # Run the transpiled circuit on the simulator, just to check that it works
@@ -123,8 +123,12 @@ class QiskitSimulator:
         try:
             modified_qasm_string = dumps(quantum_circuit)
         except QASM3ExporterError as e:
-            print('QASM3ExporterError: ', e.message)
+            print('QiskitSimulator.add_measurements_to QASM3ExporterError: ', e.message)
             return None
+        except TypeError as e:
+            print('QiskitSimulator.add_measurements_to TypeError: ', e)
+            return None
+
 
         return modified_qasm_string
 
