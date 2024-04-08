@@ -3,6 +3,7 @@
 from braket.circuits import Circuit as BraketCircuit
 from braket.devices import LocalSimulator as BraketLocalSimulator
 from braket.ir.openqasm import Program as BraketProgram
+from braket.default_simulator.openqasm.parser.openqasm_parser import QASM3ParsingError as BraketParsingError
 
 from qiskit import QuantumCircuit, transpile
 from qiskit.qasm3 import dumps, loads
@@ -35,17 +36,19 @@ class BraketSimulator:
             # Reset is not implemented for braket
             print('NotImplementedError: ', e)
             return None
+        except BraketParsingError as e:
+            print('Braket QASM3ParsingError: ', e)
+            return None
 
         return quantum_circuit
 
     def run_circuit(self, quantum_circuit, shots):
-        task = self.simulator.run(quantum_circuit, shots=shots)
+        try:
+            task = self.simulator.run(quantum_circuit, shots=shots)
+        except ValueError as e:
+            print('Braket.run_circuit ValueError: ', e)
+            return None
         return (quantum_circuit, task.result())
-
-#    def run_qasm(self, qasm_content, shots):
-#        qc = BraketCircuit.from_ir(qasm_content)
-#        task = self.simulator.run(qc, shots=shots)
-#        return (qc, task.result())
 
 class QiskitSimulator:
     def __init__(self):
@@ -79,32 +82,6 @@ class QiskitSimulator:
 
         return (quantum_circuit, result)
 
-
-#     def run_qasm(self, qasm_content, shots):
-#         try:
-#             quantum_circuit = loads(qasm_content)
-#         except QASM3ImporterError as e:
-#             print('QASM3ImporterError: ', e.message)
-#             return None
-#         except QASM3ParsingError:
-#             print('QASM3ParsingError run_qasm')
-#             return None
-#
-#         # Transpile the circuit for the simulator
-#         try:
-#             transpiled_circuit = transpile(quantum_circuit, self.simulator)
-#         except CircuitTooWideForTarget:
-#             print('CircuitTooWideForTarget')
-#             return None
-#
-#         # Run the transpiled circuit on the simulator
-#         job = self.simulator.run(transpiled_circuit, shots=shots)
-#
-#         # Grab results from the job
-#         result = job.result()
-#
-#         return (quantum_circuit, result)
-
     # Generated programs don't necessarily output their results, so add measurements
     def add_measurements_to(self, qasm_content):
         # Create a quantum circuit from QASM
@@ -121,6 +98,9 @@ class QiskitSimulator:
             return None
         except CircuitError as e:
             print('CircuitError: ', e.message)
+            return None
+        except IndexError as e:
+            print('IndexError: ', e)
             return None
 
         # Make sure there is 1 final set of measurements
@@ -168,7 +148,11 @@ def run_and_compare(qasm_content, shots, divergence_tolerance):
     if braket_circuit is None or qiskit_circuit is None:
         return True
 
-    braket_result = braket_sim.run_circuit(braket_circuit, shots)[1]
+    braket_out = braket_sim.run_circuit(braket_circuit, shots)
+    if braket_out is None:
+        return True
+    braket_circuit, braket_result = braket_out
+
     qiskit_circuit, qiskit_result = qiskit_sim.run_circuit(qiskit_circuit, shots)
 
     braket_output_len = None
@@ -238,10 +222,6 @@ if fuzzing:
     #     afl.pause_instrumentation()
     #     assert run_and_compare(qasm_content, 10000, 0.5)
 else:
-    # # Load QASM file
-    # qasm_file = "/fuzzer_input_corpus/2of5d4-n7-gc12-qc31.qasm"  # Update this path to your QASM file
-    # with open(qasm_file, "r") as file:
-    #     qasm_content = file.read()
     qasm_content = sys.stdin.read()
     qasm_content = qasm_content.replace('include "stdgates.inc";', stdgatesinc_raw)
     assert run_and_compare(qasm_content, 10000, 0.1)
