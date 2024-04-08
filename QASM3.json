@@ -1,4 +1,4 @@
-i{
+{
     "program": [
         ["OPENQASM 3.0;\n", "include \"stdgates.inc\";\n", "<registerDeclarationStatement>", "\n", "<statementsOrScopes>", "\n", "<gateCallStatement>"]
     ],
