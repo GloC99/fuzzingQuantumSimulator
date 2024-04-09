@@ -6,7 +6,7 @@ from braket.devices import LocalSimulator as BraketLocalSimulator
 from braket.ir.openqasm import Program as BraketProgram
 from braket.default_simulator.openqasm.parser.openqasm_parser import QASM3ParsingError as BraketParsingError
 
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, transpile, qasm2
 from qiskit.qasm3 import dumps, loads
 from qiskit.quantum_info import Statevector
 from qiskit_aer import Aer
@@ -20,6 +20,8 @@ from kl_divergence import get_kl_divergence
 import matplotlib.pyplot as plt
 import os, sys, argparse, math
 import time
+
+import requests, json, re
 
 import afl
 
@@ -132,6 +134,29 @@ class QiskitSimulator:
         print(f'calculating qiskit took {time.time() - start_time}')
         return filtered
 
+# Call out to the node server to see what quantastica quantum-circuit thinks
+def run_quantastica(qasm_content):
+    qc = loads(qasm_content)
+    qasm_content = qasm2.dumps(qc)
+    url = 'http://localhost:3000/run'
+    payload = {'qasm': qasm_content}
+    response = requests.post(url, data=json.dumps(payload), headers={'Content-Type': 'application/json'})
+    if response.status_code == 200:
+        probs = response.json()['probabilities']
+        probs_dict = {}
+        for line in probs.split('\n'):
+            if not '|' in line:
+                continue
+            parts = line.split()
+            state = str(parts[0].split('|')[1].replace('>', '')[::-1])
+            prob = float(parts[1].replace('%','')) / 100
+            probs_dict[state] = prob
+        # print(probs_dict)
+        return probs_dict
+    else:
+        print(response.json())
+        return None
+
 def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     global braket_sim, qiskit_sim
 
@@ -161,6 +186,9 @@ def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     if braket_probs is None or qiskit_probs is None:
         return True
 
+    quantastica_probs = run_quantastica(qasm_content)
+    assert quantastica_probs is not None
+
     new_probs = {}
     for output, prob in qiskit_probs.items():
         rev = output[::-1]
@@ -171,7 +199,10 @@ def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     # qiskit_probs = dict(map(lambda o: (str(o[::-1]), qiskit_probs[o]), qiskit_probs))
 
     divergence = get_kl_divergence(qiskit_probs, braket_probs)
-    print(f'braket_probs: {braket_probs}, qiskit_probs: {qiskit_probs}')
+    alt_divergence = get_kl_divergence(quantastica_probs, qiskit_probs)
+    if alt_divergence > divergence:
+        divergence = alt_divergence
+    print(f'braket_probs: {braket_probs}, qiskit_probs: {qiskit_probs}, quantastica_probs: {quantastica_probs}')
     print(f'divergence: {divergence}')
 
     return divergence <= divergence_tolerance
@@ -224,6 +255,7 @@ def run_and_compare_estimates(qasm_content, shots, divergence_tolerance):
 
     divergence = get_kl_divergence(qiskit_probs, braket_probs)
     print(f'qiskit sim - braket sim divergence: {divergence}')
+    print(f'qiskit_counts: {qiskit_probs}, braket_counts: {braket_probs}')
     if divergence > divergence_tolerance:
         print(f'qiskit_counts: {qiskit_probs}, braket_counts: {braket_probs}')
         # print(qasm_content)
