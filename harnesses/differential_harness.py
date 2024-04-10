@@ -15,7 +15,7 @@ from qiskit.qasm3.exceptions import QASM3ExporterError, QASM3ImporterError
 from qiskit.transpiler.exceptions import CircuitTooWideForTarget
 from openqasm3.parser import QASM3ParsingError
 
-from kl_divergence import get_kl_divergence
+from kl_divergence import get_jensen_shannon_divergence
 
 import matplotlib.pyplot as plt
 import os, sys, argparse, math
@@ -138,6 +138,7 @@ class QiskitSimulator:
 def run_quantastica(qasm_content):
     qc = loads(qasm_content)
     qasm_content = qasm2.dumps(qc)
+    print(qasm_content)
     url = 'http://localhost:3000/run'
     payload = {'qasm': qasm_content}
     response = requests.post(url, data=json.dumps(payload), headers={'Content-Type': 'application/json'})
@@ -160,13 +161,23 @@ def run_quantastica(qasm_content):
 def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     global braket_sim, qiskit_sim
 
+    start_time = time.time()
+    qiskit_circuit = qiskit_sim.build_circuit(qasm_content)
+    print(f'building qiskit took {time.time() - start_time}')
+
+    if qiskit_circuit is None:
+        return True
+
     global fuzzing
     if fuzzing:
         afl.resume_instrumentation()
 
     start_time = time.time()
     braket_circuit = braket_sim.build_circuit(qasm_content)
-    qiskit_circuit = qiskit_sim.build_circuit(qasm_content)
+    print(f'building braket took {time.time() - start_time}')
+
+    if fuzzing:
+        afl.pause_instrumentation()
 
     if braket_circuit is None or qiskit_circuit is None:
         return True
@@ -186,8 +197,10 @@ def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     if braket_probs is None or qiskit_probs is None:
         return True
 
+    start_time = time.time()
     quantastica_probs = run_quantastica(qasm_content)
     assert quantastica_probs is not None
+    print(f'quantastica took: {time.time() - start_time}')
 
     new_probs = {}
     for output, prob in qiskit_probs.items():
@@ -198,8 +211,8 @@ def run_and_compare_exact_probabilities(qasm_content, divergence_tolerance):
     qiskit_probs = new_probs
     # qiskit_probs = dict(map(lambda o: (str(o[::-1]), qiskit_probs[o]), qiskit_probs))
 
-    divergence = get_kl_divergence(qiskit_probs, braket_probs)
-    alt_divergence = get_kl_divergence(quantastica_probs, qiskit_probs)
+    divergence = get_jensen_shannon_divergence(qiskit_probs, braket_probs)
+    alt_divergence = get_jensen_shannon_divergence(quantastica_probs, qiskit_probs)
     if alt_divergence > divergence:
         divergence = alt_divergence
     print(f'braket_probs: {braket_probs}, qiskit_probs: {qiskit_probs}, quantastica_probs: {quantastica_probs}')
@@ -253,7 +266,7 @@ def run_and_compare_estimates(qasm_content, shots, divergence_tolerance):
         qiskit_probs[string] = count / shots
     # print(f'qiskit_counts: {qiskit_counts}, braket_counts: {braket_counts}')
 
-    divergence = get_kl_divergence(qiskit_probs, braket_probs)
+    divergence = get_jensen_shannon_divergence(qiskit_probs, braket_probs)
     print(f'qiskit sim - braket sim divergence: {divergence}')
     print(f'qiskit_counts: {qiskit_probs}, braket_counts: {braket_probs}')
     if divergence > divergence_tolerance:
