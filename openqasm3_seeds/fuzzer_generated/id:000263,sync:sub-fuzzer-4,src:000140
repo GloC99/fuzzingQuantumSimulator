@@ -1,5 +1,0 @@
-OPENQASM 3.0;
-include "stdgates.inc";
-qubit["1101"] r1;
-h r1[0];
-h r1[0];

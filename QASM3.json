@@ -316,7 +316,7 @@
     "<LoopVarIdentifier>": [
         ["lv1"]
     ],
-    "<HardwareQubit>": [["$", "<DecInner>"]],
+    "<HardwareQubit>": [["$", "<DecimalIntegerLiteral>"]],
     "<FloatLiteral>": [
         ["<DecimalIntegerLiteral>", ".", "<DecimalIntegerLiteral>", "<FloatLiteralExponent>"],
         ["0.0283940325132045"], ["0.0562610521523687"], ["0.090315771"], ["0.110276567223963"],

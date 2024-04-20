@@ -38,7 +38,15 @@ RUN cd /fuzzer_input_corpus; for DIR in */; do mv $DIR/* .; rm -rf $DIR; done;
 
 COPY run_many_fuzzers.sh /run_many_fuzzers.sh
 COPY run_fuzzer.sh /run_fuzzer.sh
+COPY triage_crashes.sh /triage_crashes.sh
 COPY harnesses/ /harnesses
+
+# Pull over quantastica
+COPY quantastica_quantum-circuit/ /quantastica_quantum-circuit
+RUN apt install -y npm && \
+    npm install -g quantum-circuit express pm2 && \
+    cd /quantastica_quantum-circuit && \
+    ./start_server.sh
 
 COPY ./python-afl /python-afl
 RUN cd /python-afl && pip install .

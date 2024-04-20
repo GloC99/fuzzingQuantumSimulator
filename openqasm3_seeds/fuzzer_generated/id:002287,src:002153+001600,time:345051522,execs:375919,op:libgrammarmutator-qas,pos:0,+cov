@@ -1,0 +1,5 @@
+OPENQASM 3.0;
+include "stdgates.inc";
+qubit[2] r1;
+h r1[0];
+ry(pi / 20 / pi - pi / pi / -0.960824079481623 / 5 / pi * pi * -(pi - (10)) / -2.32308793116108 / 0.0283940325132045 / 20 / pi - pi / pi / 32767 / 20 / pi - pi / pi / 32767 / 20 / pi - pi / pi / 32767 / 20 / pi - pi / pi / 32767 / 20 / pi - pi / pi / 32767 / 20 / pi - pi / pi / 32767,) r1;
