@@ -3,10 +3,10 @@ SSBSE 2024 Cow66 Challenge Track
 
 Build me with:
 ```
-sudo docker build -t sbse .
+sudo ./run_interactively.sh
 ```
 
-Get yourself into a shell with:
+Follow by:
 ```
-sudo docker run -it sbse bash
+./run_fuzzer.sh
 ```
