@@ -18,10 +18,10 @@ RUN pip install -U pip setuptools
 WORKDIR /simulators/qiskit
 RUN git clone https://github.com/Qiskit/qiskit.git
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-RUN cd qiskit && git checkout 1.0.2 && \
+RUN cd qiskit && git checkout 2.3.0 && \
     pip3 install .
 RUN git clone https://github.com/Qiskit/qiskit-aer.git
-RUN cd qiskit-aer && git checkout 0.13.3 && \
+RUN cd qiskit-aer && git checkout 0.17.1 && \
     pip install .
 RUN git clone https://github.com/Qiskit/qiskit-qasm3-import.git
 RUN cd qiskit-qasm3-import && pip install .
@@ -29,7 +29,7 @@ RUN cd qiskit-qasm3-import && pip install .
 # INSTALL BRAKET FROM SOURCE
 WORKDIR /simulators/braket
 RUN git clone https://github.com/amazon-braket/amazon-braket-sdk-python.git
-RUN cd amazon-braket-sdk-python/ && git checkout v1.74.0 && \
+RUN cd amazon-braket-sdk-python/ && git checkout v1.110.1 && \
     pip install .
 
 COPY openqasm3_seeds/ /fuzzer_input_corpus

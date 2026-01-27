@@ -299,7 +299,8 @@
         ["cx"], ["cy"], ["cz"],
         ["cp"], ["crx"], ["cry"], ["crz"], ["ch"],
         ["swap"], ["ccx"], ["cswap"], ["cu"],
-        ["CX"], ["phase"], ["cphase"], ["id"], ["u1"], ["u2"], ["u3"]
+        ["CX"], ["phase"], ["cphase"], ["id"], ["u1"], ["u2"], ["u3"],
+        ["t"], ["tdg"]
     ],
     "<NewGateIdentifier>": [
         ["g1"]
